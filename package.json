@@ -1,6 +1,6 @@
 {
   "name": "rek",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Wrapper around the Fetch API",
   "main": "index.js",
   "jsnext:main": "es/index.js",
