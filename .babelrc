@@ -1,0 +1,13 @@
+{
+  "env": {
+    "cjs": {
+      "presets": [ "es2015" ],
+      "plugins": [
+        "add-module-exports"
+      ]
+    },
+    "es": {
+      "presets": [ "./babel/preset" ]
+    }
+  }
+}
