@@ -13,14 +13,14 @@ function responder (res) {
   const contentType = res.headers.get('content-type')
 
   if (res.ok) {
-    if (contentType.includes('application/json')) {
+    if (contentType && contentType.includes('application/json')) {
       return res.json()
     }
 
     return res
   }
 
-  if (contentType.includes('application/json')) {
+  if (contentType && contentType.includes('application/json')) {
     return res.json().then((json) => {
       const err = json.error || json.err || json
 
