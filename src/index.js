@@ -4,9 +4,9 @@ let defaults = {
   headers: {
     'content-type': 'application/json',
     accept: 'application/json',
-    'X-Requested-With': 'XMLHttpRequest'
+    'X-Requested-With': 'XMLHttpRequest',
   },
-  credentials: 'same-origin'
+  credentials: 'same-origin',
 }
 
 function responder (res) {
@@ -71,7 +71,7 @@ export default {
   patch,
   del,
   rek,
-  setDefaults
+  setDefaults,
 }
 
 export {
@@ -80,5 +80,5 @@ export {
   patch,
   del,
   rek,
-  setDefaults
+  setDefaults,
 }
