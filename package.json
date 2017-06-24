@@ -2,14 +2,16 @@
   "name": "rek",
   "version": "0.1.2",
   "description": "Wrapper around the Fetch API",
-  "main": "cjs/index.js",
+  "main": "node/index.js",
+  "browser": "cjs/index.js",
   "jsnext:main": "es/index.js",
   "scripts": {
-    "clean": "rimraf es cjs",
+    "clean": "rimraf es cjs node",
     "lint": "eslint src",
-    "build": "npm run build:cjs && npm run build:es",
+    "build": "npm run build:cjs && npm run build:es && npm run build:node",
     "build:cjs": "BABEL_ENV=cjs babel src --out-dir cjs",
     "build:es": "BABEL_ENV=es babel src --out-dir es",
+    "build:node": "BABEL_ENV=node babel src --out-dir node",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepublish": "npm run clean && npm run lint && npm run build",
     "preversion": "npm run lint"
@@ -25,7 +27,8 @@
   },
   "homepage": "https://github.com/lohfu/rek#readme",
   "dependencies": {
-    "lowline": "^0.1.5"
+    "lowline": "^0.1.5",
+    "node-fetch": "^1.7.1"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",

@@ -1,5 +1,12 @@
 {
   "env": {
+    "node": {
+      "presets": [ "es2015" ],
+      "plugins": [
+        "add-module-exports",
+        "./babel/inject"
+      ]
+    },
     "cjs": {
       "presets": [ "es2015" ],
       "plugins": [
