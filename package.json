@@ -3,7 +3,9 @@
   "version": "0.2.1",
   "description": "Wrapper around the Fetch API",
   "main": "node/index.js",
+  "module": "es/index.js",
   "jsnext:main": "es/index.js",
+  "browser": "cjs/index.js",
   "scripts": {
     "clean": "rimraf es cjs node",
     "lint": "eslint src",
