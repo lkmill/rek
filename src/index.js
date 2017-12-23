@@ -1,21 +1,22 @@
 import factory from './factory'
 
-Object.assign(factory, factory())
-
 const {
-  get,
-  post,
-  patch,
   del,
+  get,
+  patch,
+  post,
   rek,
-} = factory
+} = factory()
 
-export default factory
+rek.factory = factory
+
+export default rek
 
 export {
-  get,
-  post,
-  patch,
   del,
+  factory,
+  get,
+  patch,
+  post,
   rek,
 }

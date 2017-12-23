@@ -1,8 +1,9 @@
 import { isPlainObject } from 'lowline'
 
-import responder from './responder'
+import defaultResponder from './responder'
 
 let initialDefaults = {
+  method: 'GET',
   headers: {
     'content-type': 'application/json',
     accept: 'application/json',
@@ -11,7 +12,7 @@ let initialDefaults = {
   credentials: 'same-origin',
 }
 
-export default (defaults = initialDefaults, merge = true) => {
+export default function factory (defaults = initialDefaults, merge = true, responder = defaultResponder) {
   if (defaults !== initialDefaults && merge) {
     // conditional is to guard against null
     defaults = defaults ? {
@@ -55,6 +56,8 @@ export default (defaults = initialDefaults, merge = true) => {
   function post (url, body, options) {
     return rek(url, Object.assign({ body, method: 'POST' }, options))
   }
+
+  Object.assign(rek, { del, get, patch, post })
 
   return {
     rek,
