@@ -1,24 +1,8 @@
-import { isPlainObject } from 'lowline'
+import { merge, isPlainObject } from 'lowline'
 
-import defaultResponder from './responder'
-
-let initialDefaults = {
-  method: 'GET',
-  headers: {
-    'content-type': 'application/json',
-    accept: 'application/json',
-    'X-Requested-With': 'XMLHttpRequest',
-  },
-  credentials: 'same-origin',
-}
-
-export default function factory (defaults = initialDefaults, merge = true, responder = defaultResponder) {
-  if (defaults !== initialDefaults && merge) {
-    // conditional is to guard against null
-    defaults = defaults ? {
-      credentials: defaults.credentials || initialDefaults.credentials,
-      headers: Object.assign({}, initialDefaults.headers, defaults.headers),
-    } : initialDefaults
+export default function baseFactory (defaults, responder) {
+  if (!defaults || !responder) {
+    throw new Error('Defaults and responder are required')
   }
 
   function rek (url, options) {
@@ -41,6 +25,17 @@ export default function factory (defaults = initialDefaults, merge = true, respo
     return promise.then(responder)
   }
 
+  function factory (_defaults = defaults, shouldMerge = true, _responder = responder) {
+    if (shouldMerge && _defaults !== defaults) {
+      _defaults = merge({}, defaults, _defaults)
+    } else if (!_defaults) {
+      // guard against null
+      _defaults = defaults
+    }
+
+    return baseFactory(_defaults, _responder)
+  }
+
   function get (url, options) {
     return rek(url, Object.assign({}, options, { method: 'GET' }))
   }
@@ -57,13 +52,5 @@ export default function factory (defaults = initialDefaults, merge = true, respo
     return rek(url, Object.assign({}, options, { body, method: 'POST' }))
   }
 
-  Object.assign(rek, { del, get, patch, post })
-
-  return {
-    rek,
-    get,
-    del,
-    patch,
-    post,
-  }
+  return Object.assign(rek, { del, get, patch, post, factory })
 }
