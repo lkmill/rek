@@ -166,10 +166,6 @@ const rek = defaultRek.factory(defaults)
 const { factory, del, get, patch, post } = rek
 ```
 
-NOTE: the `rek` function returned from the factory has all other http methods
-as properties, but not the factory like the "original" default export or named
-export `rek`.
-
 The factory will return a new `rek` function with it's own factory. Calling
 this returned factory will merge defaults with previous factories defaults.
 
