@@ -1,20 +1,20 @@
 {
   "env": {
     "node": {
-      "presets": [ "es2015" ],
+      "presets": [[ "@babel/env", { "targets": { "node": 6  } } ]],
       "plugins": [
-        "./babel/add-module-exports",
+        "add-module-exports",
         "./babel/inject"
       ]
     },
     "cjs": {
-      "presets": [ "es2015" ],
+      "presets": [[ "@babel/env", { "modules": "commonjs", "shippedProposals": true } ]],
       "plugins": [
-        "./babel/add-module-exports"
+        "add-module-exports"
       ]
     },
     "es": {
-      "presets": [ "./babel/preset" ]
+      "presets": [[ "@babel/env", { "modules": false, "shippedProposals": true } ]]
     }
   }
 }

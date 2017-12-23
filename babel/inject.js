@@ -1,6 +1,8 @@
 'use strict'
 
-module.exports = function ({ types: t }) {
+const { types: t } = require('@babel/core')
+
+module.exports = function () {
   return {
     visitor: {
       Program: {
@@ -19,7 +21,6 @@ module.exports = function ({ types: t }) {
                 ])),
               ]),
 
-              // 
               t.expressionStatement(t.assignmentExpression(
                 '=',
                 t.memberExpression(t.identifier('fetch'), t.identifier('Promise')),
