@@ -21,7 +21,7 @@ export default (defaults = initialDefaults, merge = true) => {
   }
 
   function rek (url, options) {
-    options = options ? Object.assign({}, defaults, options) : defaults
+    options = Object.assign({}, defaults, options)
 
     if (isPlainObject(options.body)) {
       const contentType = (options.headers && (options.headers instanceof Headers && options.headers.get('content-type'))) || options.headers['content-type']
