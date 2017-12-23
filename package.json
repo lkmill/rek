@@ -28,7 +28,9 @@
   },
   "homepage": "https://github.com/lohfu/rek#readme",
   "dependencies": {
-    "lowline": "^0.1.5",
+    "lowline": "^0.1.5"
+  },
+  "optionalDependencies": {
     "node-fetch": "^1.7.1"
   },
   "devDependencies": {
