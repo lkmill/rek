@@ -42,19 +42,19 @@ export default function factory (defaults = initialDefaults, merge = true, respo
   }
 
   function get (url, options) {
-    return rek(url, Object.assign({ method: 'GET' }, options))
+    return rek(url, Object.assign({}, options, { method: 'GET' }))
   }
 
   function del (url, options) {
-    return rek(url, Object.assign({ method: 'DELETE' }, options))
+    return rek(url, Object.assign({}, options, { method: 'DELETE' }))
   }
 
   function patch (url, body, options) {
-    return rek(url, Object.assign({ body, method: 'PATCH' }, options))
+    return rek(url, Object.assign({}, options, { body, method: 'PATCH' }))
   }
 
   function post (url, body, options) {
-    return rek(url, Object.assign({ body, method: 'POST' }, options))
+    return rek(url, Object.assign({}, options, { body, method: 'POST' }))
   }
 
   Object.assign(rek, { del, get, patch, post })
