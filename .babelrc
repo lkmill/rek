@@ -3,6 +3,7 @@
     "node": {
       "presets": [[ "@babel/env", { "targets": { "node": 6  } } ]],
       "plugins": [
+        "./babel/remove-named-exports",
         "add-module-exports",
         "./babel/inject"
       ]
@@ -10,6 +11,7 @@
     "cjs": {
       "presets": [[ "@babel/env", { "modules": "commonjs", "shippedProposals": true } ]],
       "plugins": [
+        "./babel/remove-named-exports",
         "add-module-exports"
       ]
     },
