@@ -1,6 +1,6 @@
 {
   "name": "rek",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Wrapper around the Fetch API",
   "main": "node/index.js",
   "module": "es/index.js",
