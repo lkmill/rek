@@ -29,5 +29,4 @@ export {
   get,
   patch,
   post,
-  rek,
 }
