@@ -5,6 +5,9 @@
   "main": "node/index.js",
   "module": "es/index.js",
   "jsnext:main": "es/index.js",
+  "browser": {
+    "node/index.js": "cjs/index.js"
+  },
   "scripts": {
     "clean": "rimraf es cjs node",
     "lint": "eslint src",
