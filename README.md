@@ -4,6 +4,12 @@ Wrapper around the Fetch API, mainly meant for consuming JSON api's
 but exposes a factory function for creating defaults for XML api's
 or what not.
 
+## Install
+
+```sh
+$ npm install rek
+```
+
 ## Philosophy
 
 While the Fetch API is a hell of a lot nicer to work with than XHR,
