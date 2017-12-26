@@ -85,7 +85,7 @@ let defaults = {
 }
 ```
 
-See the #factory section below for setting custom defaults.
+See the [factory](#factory) section below for setting custom defaults.
 
 ## Exports
 
@@ -113,12 +113,12 @@ on a default export.
 ```js
 import { get, post } from 'rek'
 
-get('/api/poops').then((users) => {
-  console.log('users')
+get('/api/peeps').then((users) => {
+  console.log(users)
 })
 
-post('/api/poops', { color: 'brown', weight: '2kg' }).then((poop) => {
-  console.log(poop.id, poop.createdAt)
+post('/api/peeps', { name: 'James Brown' }).then((user) => {
+  console.log(user.id, user.createdAt)
 })
 ```
 
@@ -127,12 +127,12 @@ post('/api/poops', { color: 'brown', weight: '2kg' }).then((poop) => {
 ```js
 import rek from 'rek'
 
-rek.get('/api/poops').then((users) => {
-  console.log('users')
+rek.get('/api/peeps').then((users) => {
+  console.log(users)
 })
 
-rek.post('/api/poops', { color: 'brown', weight: '2kg' }).then((poop) => {
-  console.log(poop.id, poop.createdAt)
+rek.post('/api/peeps', { name: 'James Brown' }).then((user) => {
+  console.log(user.id, user.createdAt)
 })
 ```
 
