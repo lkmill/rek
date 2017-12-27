@@ -36,6 +36,9 @@ jspm_packages
 # Optional REPL history
 .node_repl_history
 
+# Do not commit package-lock for libraries
+package-lock.json
+
 /cjs
 
 /es
