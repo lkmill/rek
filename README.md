@@ -6,13 +6,26 @@ or what not.
 
 ## Install
 
+NPM:
+
 ```sh
 $ npm install rek
 ```
 
+CDN:
+
+```html
+<script src="https://unpkg.com/rek@latest/dist/rek.js"></script>
+
+<!-- OR -->
+
+<script src="https://unpkg.com/rek@latest/dist/rek.min.js"></script>
+```
+
+
 ## Philosophy
 
-While the Fetch API is a hell of a lot nicer to work with than XHR,
+While the Fetch API is significantly nicer to work with than XHR,
 it still quickly becomes verbose to do simple tasks. `rek` is simply
 meant as wrapper around Fetch with editable defaults that provides
 methods for working against the standard HTTP methods.
@@ -93,7 +106,7 @@ See the [factory](#factory) section below for setting custom defaults.
 
 - __del__: make a request using the DELETE method
 - __factory__: returns an object containing all methods with new default
-  options and optionally another responder
+  options and optionally another [responder](#the-responder)
 - __get__: make a request using the GET method
 - __patch__: make a request using PATCH method
 - __post__: make a request using POST method
@@ -127,6 +140,12 @@ post('/api/peeps', { name: 'James Brown' }).then((user) => {
 ```js
 import rek from 'rek'
 
+// the default http method in the initial defaults is 'GET', ie
+// out of the box the regular `rek` function is equivalent to `rek.get`
+rek('/api/peeps').then((users) => {
+  console.log(users)
+})
+
 rek.get('/api/peeps').then((users) => {
   console.log(users)
 })
@@ -138,10 +157,12 @@ rek.post('/api/peeps', { name: 'James Brown' }).then((user) => {
 
 ### factory:
 
-factory(defaults, merge, responder)
+```js
+factory(defaults, shouldMerge, responder)
+```
 
-Merge decides whether to merge the passed in defaults with original defaults.
-Pass responder to use custom responder instead of the provided.
+`shouldMerge` decides whether to merge the passed in defaults with original defaults.
+Pass responder to use custom [responder](#the-responder) instead of the provided.
 
 ```js
 import { factory } from 'rek'
@@ -179,7 +200,7 @@ this returned factory will merge defaults with previous factories defaults.
 
 The responder uses the headers to decide what to do with the response from server.
 
-See `src/responder.js` for implementation details.
+See [src/responder.js](https://github.com/lohfu/rek/blob/master/src/responder.js) for implementation details.
 
 ## Credits
 
