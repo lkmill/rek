@@ -8,6 +8,7 @@
         "./babel/inject"
       ]
     },
+
     "cjs": {
       "presets": [[ "@babel/env", { "modules": "commonjs", "shippedProposals": true } ]],
       "plugins": [
@@ -15,8 +16,16 @@
         "add-module-exports"
       ]
     },
+
     "es": {
       "presets": [[ "@babel/env", { "modules": false, "shippedProposals": true } ]]
+    },
+
+    "umd": {
+      "presets": [[ "@babel/env", { "modules": false, "shippedProposals": true } ]],
+      "plugins": [
+        "./babel/remove-named-exports"
+      ]
     }
   }
 }

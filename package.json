@@ -9,12 +9,14 @@
     "node/index.js": "cjs/index.js"
   },
   "scripts": {
-    "clean": "rimraf es cjs node",
+    "clean": "rimraf cjs dist es node",
     "lint": "eslint src",
-    "build": "npm run build:cjs && npm run build:es && npm run build:node",
+    "build": "npm run build:cjs && npm run build:es && npm run build:node && npm run build:umd && npm run build:umd:min",
     "build:cjs": "BABEL_ENV=cjs babel src --out-dir cjs",
     "build:es": "BABEL_ENV=es babel src --out-dir es",
     "build:node": "BABEL_ENV=node babel src --out-dir node",
+    "build:umd": "mkdir -p dist && BABEL_ENV=umd rollup -c -o dist/rek.js",
+    "build:umd:min": "mkdir -p dist && BABEL_ENV=umd rollup -c | uglifyjs -c -m > dist/rek.min.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepublish": "npm run clean && npm run lint && npm run build",
     "preversion": "npm run lint"
@@ -47,6 +49,10 @@
     "eslint-plugin-node": "^5.0.0",
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-react": "^7.1.0",
-    "eslint-plugin-standard": "^3.0.1"
+    "eslint-plugin-standard": "^3.0.1",
+    "require-relative": "^0.8.7",
+    "rollup": "^0.53.0",
+    "rollup-plugin-babel": "^4.0.0-beta.0",
+    "rollup-plugin-node-resolve": "^3.0.0"
   }
 }
