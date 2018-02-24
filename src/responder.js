@@ -1,5 +1,7 @@
 import { omit, pick } from 'lowline'
 
+const texts = ['text', 'application/xml']
+
 export default function responder (res) {
   const contentType = res.headers.get('content-type')
 
@@ -9,7 +11,7 @@ export default function responder (res) {
         return res.json()
       }
 
-      if (contentType.startsWith('text')) {
+      if (texts.some((str) => contentType.startsWith(str))) {
         return res.text()
       }
     }
