@@ -7,13 +7,14 @@ export default {
       exclude: 'node_modules/**/*',
     }),
     nodeResolve({
+      extensions: [ '.mjs', '.js' ],
       jsnext: true,
       main: true,
       module: true,
       browser: true,
     }),
   ],
-  input: 'src/index.js',
+  input: 'src/index.mjs',
   output: {
     format: 'umd',
     name: 'rek',

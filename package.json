@@ -3,8 +3,8 @@
   "version": "0.3.5",
   "description": "Wrapper around the Fetch API",
   "main": "node/index.js",
-  "module": "es/index.js",
-  "jsnext:main": "es/index.js",
+  "module": "es/index.mjs",
+  "jsnext:main": "es/index.mjs",
   "browser": {
     "node/index.js": "cjs/index.js"
   },
@@ -13,7 +13,7 @@
     "lint": "eslint src",
     "build": "npm run build:cjs && npm run build:es && npm run build:node && npm run build:umd && npm run build:umd:min",
     "build:cjs": "BABEL_ENV=cjs babel src --out-dir cjs",
-    "build:es": "BABEL_ENV=es babel src --out-dir es",
+    "build:es": "BABEL_ENV=es babel src --keep-file-extension --out-dir es",
     "build:node": "BABEL_ENV=node babel src --out-dir node",
     "build:umd": "mkdir -p dist && BABEL_ENV=umd rollup -c -o dist/rek.js",
     "build:umd:min": "mkdir -p dist && BABEL_ENV=umd rollup -c | uglifyjs -c -m > dist/rek.min.js",
