@@ -7,7 +7,7 @@ module.exports = function () {
     visitor: {
       Program: {
         enter: (path, _ref) => {
-          if (_ref.file.opts.filename === 'src/factory.js') {
+          if (_ref.file.opts.filename === 'src/factory.mjs') {
             const node = t.importDeclaration([
               t.importDefaultSpecifier(t.identifier('fetch')),
               t.importSpecifier(t.identifier('Headers'), t.identifier('Headers')),
