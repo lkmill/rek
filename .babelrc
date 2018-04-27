@@ -1,7 +1,9 @@
 {
   "env": {
     "node": {
-      "presets": [[ "@babel/env", { "targets": { "node": 6  } } ]],
+      "presets": [
+         [ "@babel/env", { "shippedProposals": true, "targets": { "node": 6 } }]
+      ],
       "plugins": [
         "./babel/remove-named-exports",
         "add-module-exports",
@@ -10,19 +12,25 @@
     },
 
     "cjs": {
-      "presets": [[ "@babel/env", { "modules": "commonjs", "shippedProposals": true } ]],
+      "presets": [
+         [ "@babel/env", { "modules": "commonjs", "shippedProposals": true } ]
+      ],
       "plugins": [
         "./babel/remove-named-exports",
         "add-module-exports"
       ]
     },
 
-    "es": {
-      "presets": [[ "@babel/env", { "modules": false, "shippedProposals": true } ]]
+    "esm": {
+      "presets": [
+         [ "@babel/env", { "modules": false, "shippedProposals": true } ]
+      ]
     },
 
     "umd": {
-      "presets": [[ "@babel/env", { "modules": false, "shippedProposals": true } ]],
+      "presets": [
+         [ "@babel/env", { "modules": false, "shippedProposals": true } ]
+      ],
       "plugins": [
         "./babel/remove-named-exports"
       ]

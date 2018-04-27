@@ -39,7 +39,6 @@ jspm_packages
 # Do not commit package-lock for libraries
 package-lock.json
 
-/cjs
+/browser
 /dist
-/es
 /node
