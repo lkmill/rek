@@ -7,10 +7,11 @@
   "scripts": {
     "clean": "rimraf browser dist node",
     "lint": "eslint src --ext mjs",
-    "build": "npm run build:cjs && npm run build:esm && npm run build:node && npm run build:umd && npm run build:umd:min",
+    "build": "npm run build:cjs && npm run build:esm && npm run build:node:cjs && npm run build:node:esm && npm run build:umd && npm run build:umd:min",
     "build:cjs": "BABEL_ENV=cjs babel src --out-dir browser",
     "build:esm": "BABEL_ENV=esm babel src --keep-file-extension --out-dir browser",
-    "build:node": "BABEL_ENV=node babel src --out-dir node",
+    "build:node:cjs": "BABEL_ENV=node:cjs babel src --out-dir node",
+    "build:node:esm": "BABEL_ENV=node:esm babel src --keep-file-extension --out-dir node",
     "build:umd": "mkdir -p dist && BABEL_ENV=umd rollup -c -o dist/rek.js",
     "build:umd:min": "mkdir -p dist && BABEL_ENV=umd rollup -c | uglifyjs -c -m > dist/rek.min.js",
     "test": "echo \"Error: no test specified\" && exit 1",

@@ -1,11 +1,20 @@
 {
   "env": {
-    "node": {
+    "node:cjs": {
       "presets": [
          [ "@babel/env", { "shippedProposals": true, "targets": { "node": 6 } }]
       ],
       "plugins": [
         "add-module-exports",
+        "./babel/inject"
+      ]
+    },
+
+    "node:esm": {
+      "presets": [
+         [ "@babel/env", { "shippedProposals": true, "targets": { "node": 6 }, "modules": false }]
+      ],
+      "plugins": [
         "./babel/inject"
       ]
     },
