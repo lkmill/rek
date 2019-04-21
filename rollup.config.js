@@ -7,11 +7,7 @@ export default {
       exclude: 'node_modules/**/*',
     }),
     nodeResolve({
-      extensions: [ '.mjs', '.js' ],
-      jsnext: true,
-      main: true,
-      module: true,
-      browser: true,
+      mainFields: [ 'module', 'browser', 'main' ],
     }),
   ],
   input: 'src/index.mjs',
