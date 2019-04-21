@@ -15,14 +15,17 @@ const responseTypes = {
   text: 'text/*',
 }
 
-class FetchError extends Error {
-  constructor (response) {
-    super(response.statusText)
+function FetchError (response) {
+  Error.captureStackTrace(this, FetchError)
 
-    this.status = response.status
-    this.response = response
-  }
+  this.name = 'FetchError'
+  this.message = response.statusText
+  this.status = response.status
+  this.response = response
 }
+
+FetchError.prototype = Object.create(Error.prototype)
+FetchError.prototype.constructor = FetchError
 
 function run (url, options) {
   return fetch(url, options).then(res => {
@@ -36,10 +39,7 @@ function run (url, options) {
 
 export default function factory (defaults = {}) {
   function rek (url, options) {
-    options = {
-      ...defaults,
-      ...options,
-    }
+    options = Object.assign({}, defaults, options)
 
     if (options.baseUrl) {
       url = (new URL(url, options.baseUrl)).href
@@ -60,7 +60,7 @@ export default function factory (defaults = {}) {
     }
 
     for (const type in responseTypes) {
-      obj[type] = () => {
+      obj[type] = function () {
         headers.set('accept', responseTypes[type])
 
         return run(url, options).then(res => res[type]())
@@ -71,7 +71,7 @@ export default function factory (defaults = {}) {
   }
 
   requestMethods.forEach((method) => {
-    rek[method] = (url, options) => rek(url, { ...options, method: method.toUpperCase() })
+    rek[method] = (url, options) => rek(url, Object.assign({}, options, { method: method.toUpperCase() }))
   })
 
   rek.factory = factory
