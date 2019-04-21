@@ -1,11 +1,3 @@
-const bodyMethods = [
-  'arrayBuffer',
-  'blob',
-  'formData',
-  'json',
-  'text',
-]
-
 const requestMethods = [
   'delete',
   'get',
@@ -14,6 +6,14 @@ const requestMethods = [
   'post',
   'put',
 ]
+
+const responseTypes = {
+  arrayBuffer: '*/*',
+  blob: '*/*',
+  formData: 'multipart/form-data',
+  json: 'application/json',
+  text: 'text/*',
+}
 
 class FetchError extends Error {
   constructor (response) {
@@ -24,38 +24,51 @@ class FetchError extends Error {
   }
 }
 
+function run (url, options) {
+  return fetch(url, options).then(res => {
+    if (!res.ok) {
+      throw new FetchError(res)
+    }
+
+    return res
+  })
+}
+
 export default function factory (defaults = {}) {
   function rek (url, options) {
     options = {
       ...defaults,
       ...options,
-      headers: new Headers(Object.assign({}, defaults.headers, options.headers)),
     }
 
+    const headers = options.headers = new Headers(Object.assign({}, defaults.headers, options.headers))
+
     if (options.json) {
-      options.headers.set('content-type', 'application/json')
+      headers.set('content-type', 'application/json')
 
       options.body = JSON.stringify(options.json)
     }
 
-    const promise = fetch(url, options).then(res => {
-      if (!res.ok) {
-        throw new FetchError(res)
-      }
-
-      return res
-    })
-
-    for (const method of bodyMethods) {
-      promise[method] = () => promise.then(res => res[method]())
+    const obj = {
+      then: (onResolved, onRejected) => run(url, options).then(onResolved, onRejected),
+      catch: (onRejected) => run(url, options).catch(onRejected),
+      finally: (onFinally) => run(url, options).finally(onFinally),
     }
 
-    return promise
+    for (const type in responseTypes) {
+      obj[type] = () => {
+        headers.set('accept', responseTypes[type])
+
+        return run(url, options).then(res => res[type]())
+      }
+    }
+
+    return obj
   }
 
-  for (const method of requestMethods) {
+  requestMethods.forEach((method) => {
     rek[method] = (url, options) => rek(url, { ...options, method: method.toUpperCase() })
-  }
+  })
 
   rek.factory = factory
 
