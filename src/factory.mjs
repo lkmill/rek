@@ -1,5 +1,3 @@
-import { isPlainObject } from 'lowline'
-
 const bodyMethods = [
   'arrayBuffer',
   'blob',
@@ -17,27 +15,21 @@ const requestMethods = [
   'put',
 ]
 
-export default function factory (defaults) {
-  if (!defaults) {
-    throw new Error('Defaults are required')
-  }
-
+export default function factory (defaults = {}) {
   function rek (url, options) {
-    options = Object.assign({}, defaults, options)
+    options = {
+      ...defaults,
+      ...options,
+      headers: new Headers(Object.assign({}, defaults.headers, options.headers)),
+    }
 
-    if (isPlainObject(options.body)) {
-      const contentType = (options.headers && (options.headers instanceof Headers && options.headers.get('content-type'))) || options.headers['content-type']
+    if (options.json) {
+      options.headers.set('content-type', 'application/json')
 
-      if (contentType && contentType === 'application/json') {
-        options.body = JSON.stringify(options.body)
-      }
+      options.body = JSON.stringify(options.json)
     }
 
     const promise = fetch(url, options)
-
-    if (options.raw) {
-      return promise
-    }
 
     for (const method of bodyMethods) {
       promise[method] = () => promise.then(res => res[method]())
