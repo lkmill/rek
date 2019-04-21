@@ -13,20 +13,4 @@ let defaults = {
 
 const rek = baseFactory(defaults, responder)
 
-const {
-  del,
-  get,
-  patch,
-  post,
-  factory,
-} = rek
-
 export default rek
-
-export {
-  del,
-  factory,
-  get,
-  patch,
-  post,
-}
