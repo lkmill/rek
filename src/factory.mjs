@@ -1,5 +1,14 @@
 import { merge, isPlainObject } from 'lowline'
 
+const requestMethods = [
+  'delete',
+  'get',
+  'head',
+  'patch',
+  'post',
+  'put',
+]
+
 export default function baseFactory (defaults, responder) {
   if (!defaults || !responder) {
     throw new Error('Defaults and responder are required')
@@ -36,21 +45,11 @@ export default function baseFactory (defaults, responder) {
     return baseFactory(_defaults, _responder)
   }
 
-  function get (url, options) {
-    return rek(url, Object.assign({}, options, { method: 'GET' }))
+  for (const method of requestMethods) {
+    rek[method] = (url, options) => rek(url, { ...options, method: method.toUpperCase() })
   }
 
-  function del (url, options) {
-    return rek(url, Object.assign({}, options, { method: 'DELETE' }))
-  }
+  rek.factory = factory
 
-  function patch (url, body, options) {
-    return rek(url, Object.assign({}, options, { body, method: 'PATCH' }))
-  }
-
-  function post (url, body, options) {
-    return rek(url, Object.assign({}, options, { body, method: 'POST' }))
-  }
-
-  return Object.assign(rek, { del, get, patch, post, factory })
+  return rek
 }
