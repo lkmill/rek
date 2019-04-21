@@ -1,4 +1,12 @@
-import { merge, isPlainObject } from 'lowline'
+import { isPlainObject } from 'lowline'
+
+const bodyMethods = [
+  'arrayBuffer',
+  'blob',
+  'formData',
+  'json',
+  'text',
+]
 
 const requestMethods = [
   'delete',
@@ -9,9 +17,9 @@ const requestMethods = [
   'put',
 ]
 
-export default function baseFactory (defaults, responder) {
-  if (!defaults || !responder) {
-    throw new Error('Defaults and responder are required')
+export default function factory (defaults) {
+  if (!defaults) {
+    throw new Error('Defaults are required')
   }
 
   function rek (url, options) {
@@ -31,18 +39,11 @@ export default function baseFactory (defaults, responder) {
       return promise
     }
 
-    return promise.then(responder)
-  }
-
-  function factory (_defaults = defaults, shouldMerge = true, _responder = responder) {
-    if (shouldMerge && _defaults !== defaults) {
-      _defaults = merge({}, defaults, _defaults)
-    } else if (!_defaults) {
-      // guard against null
-      _defaults = defaults
+    for (const method of bodyMethods) {
+      promise[method] = () => promise.then(res => res[method]())
     }
 
-    return baseFactory(_defaults, _responder)
+    return promise
   }
 
   for (const method of requestMethods) {

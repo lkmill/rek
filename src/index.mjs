@@ -1,7 +1,6 @@
-import responder from './responder'
-import baseFactory from './factory'
+import factory from './factory'
 
-let defaults = {
+const defaults = {
   method: 'GET',
   headers: {
     'content-type': 'application/json',
@@ -11,6 +10,4 @@ let defaults = {
   credentials: 'same-origin',
 }
 
-const rek = baseFactory(defaults, responder)
-
-export default rek
+export default factory(defaults)
