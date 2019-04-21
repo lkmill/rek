@@ -15,6 +15,15 @@ const requestMethods = [
   'put',
 ]
 
+class FetchError extends Error {
+  constructor (response) {
+    super(response.statusText)
+
+    this.status = response.status
+    this.response = response
+  }
+}
+
 export default function factory (defaults = {}) {
   function rek (url, options) {
     options = {
@@ -29,7 +38,13 @@ export default function factory (defaults = {}) {
       options.body = JSON.stringify(options.json)
     }
 
-    const promise = fetch(url, options)
+    const promise = fetch(url, options).then(res => {
+      if (!res.ok) {
+        throw new FetchError(res)
+      }
+
+      return res
+    })
 
     for (const method of bodyMethods) {
       promise[method] = () => promise.then(res => res[method]())
