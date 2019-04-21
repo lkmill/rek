@@ -4,6 +4,7 @@
   "description": "Wrapper around the Fetch API",
   "main": "node/index",
   "browser": "browser/index",
+  "module": "browser/index.mjs",
   "scripts": {
     "clean": "rimraf browser dist node",
     "lint": "eslint src --ext mjs",
