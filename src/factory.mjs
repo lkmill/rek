@@ -41,6 +41,10 @@ export default function factory (defaults = {}) {
       ...options,
     }
 
+    if (options.baseUrl) {
+      url = (new URL(url, options.baseUrl)).href
+    }
+
     const headers = options.headers = new Headers(Object.assign({}, defaults.headers, options.headers))
 
     if (options.json) {

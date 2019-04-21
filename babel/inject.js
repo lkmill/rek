@@ -8,13 +8,18 @@ module.exports = function () {
       Program: {
         enter: (path, _ref) => {
           if (_ref.file.opts.filename.endsWith('src/factory.mjs')) {
-            console.log('doing stuff')
             const node = t.importDeclaration([
               t.importDefaultSpecifier(t.identifier('fetch')),
               t.importSpecifier(t.identifier('Headers'), t.identifier('Headers')),
             ], t.stringLiteral('node-fetch'))
 
             path.node.body.unshift(node)
+
+            const node2 = t.importDeclaration([
+              t.importSpecifier(t.identifier('URL'), t.identifier('URL')),
+            ], t.stringLiteral('url'))
+
+            path.node.body.unshift(node2)
           }
         },
       },
