@@ -23,6 +23,19 @@
     "type": "git",
     "url": "git+https://github.com/lohfu/rek.git"
   },
+  "keywords": [
+    "ajax",
+    "curl",
+    "fetch",
+    "fetching",
+    "http",
+    "https",
+    "node-fetch",
+    "request",
+    "requests",
+    "wget",
+    "xhr"
+  ],
   "author": "Linus Miller <lohfu@lohfu.io> (https://lohfu.io/)",
   "license": "MIT",
   "bugs": {
