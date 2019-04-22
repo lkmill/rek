@@ -2,6 +2,9 @@ const requestMethods = [
   'delete',
   'get',
   'head',
+]
+
+const dataMethods = [
   'patch',
   'post',
   'put',
@@ -74,6 +77,10 @@ export default function factory (defaults = {}) {
 
   requestMethods.forEach((method) => {
     rek[method] = (url, options) => rek(url, Object.assign({}, options, { method: method.toUpperCase() }))
+  })
+
+  dataMethods.forEach((method) => {
+    rek[method] = (url, body, options) => rek(url, Object.assign({ body }, options, { method: method.toUpperCase() }))
   })
 
   rek.factory = factory
