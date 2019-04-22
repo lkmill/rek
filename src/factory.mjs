@@ -47,10 +47,12 @@ export default function factory (defaults = {}) {
 
     const headers = options.headers = new Headers(Object.assign({}, defaults.headers, options.headers))
 
-    if (options.json) {
+    const { body } = options
+
+    if (body && typeof body !== 'string' && (!headers.has('content-type') || headers.get('content-type').includes('application/json'))) {
       headers.set('content-type', 'application/json')
 
-      options.body = JSON.stringify(options.json)
+      options.body = JSON.stringify(body)
     }
 
     const obj = {
