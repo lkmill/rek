@@ -184,6 +184,24 @@ myRek.delete()
 myRek.patch()
 ```
 
+### baseUrl
+
+The `baseUrl` option can be used to set a URL that all relative paths
+will be calculated against. It uses the WHATWG URL to calculate like so:
+
+```js
+url = (new URL(url, options.baseUrl)).href
+```
+
+Setting this through defaults is very useful for SSR and similar.
+
+```
+const apiRek = rek.factory({
+  ...,
+  baseUrl: http://localhost:1337/,
+})
+```
+
 
 ## Credits
 
