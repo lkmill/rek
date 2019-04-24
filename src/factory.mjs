@@ -65,7 +65,7 @@ export default function factory (defaults = {}) {
     }
 
     for (const type in responseTypes) {
-      obj[type] = function () {
+      obj[type] = () => {
         headers.set('accept', responseTypes[type])
 
         return run(url, options).then(res => res[type]())
