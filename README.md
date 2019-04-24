@@ -1,8 +1,7 @@
 # rek
 
-Wrapper around the Fetch API, mainly meant for consuming JSON api's
-but exposes a factory function for creating defaults for XML api's
-or what not.
+Tiny  convience wrapper around the Fetch API aiming to
+reduce boilerplate. The UMD build is ~808 bytes gzipped.
 
 ## Install
 
@@ -22,29 +21,25 @@ CDN:
 <script src="https://unpkg.com/rek@latest/dist/rek.min.js"></script>
 ```
 
-
 ## Philosophy
 
 While the Fetch API is significantly nicer to work with than XHR,
-it still quickly becomes verbose to do simple tasks. `rek` is simply
-meant as wrapper around Fetch with editable defaults that provides
-methods for working against the standard HTTP methods.
-
-To create a relatively simple `POST` request using JSON, you often
-have to write something like:
+it still quickly becomes verbose to do simple tasks. To create a
+relatively simple `POST` request using JSON, you often have to
+write something like:
 
 ```js
 fetch('/api/peeps', {
   method: 'POST',
-  body: JSON.stringify({
-    name: 'James Brown',
-  }),
-  credentials: 'same-origin',
   headers: {
     'X-Requested-With': 'XMLHttpRequest',
     'content-type': 'application/json',
     accept: 'application/json',
-  }
+  },
+  credentials: 'same-origin',
+  body: JSON.stringify({
+    name: 'James Brown',
+  }),
 }).then((res) => {
   const contentType = res.headers.get('content-type')
 
@@ -52,155 +47,143 @@ fetch('/api/peeps', {
     return res.json()
   }
 
-  // request errored, handle
-  return res.json().then((json) => {
-    const err = json.error || json.err || json
+  const err = new Error(response.statusText)
 
-    throw Object.assign(new Error(err.message), omit(err, 'message'))
-  })
+  err.status = response.status
+
+  throw err
 }).then((person) => {
-  console.log(person.id, person.createdAt)
-})
+  console.log(person)
+}).catch()
 ```
 
 With `rek` this simply becomes:
 
 ```js
-import { post } from 'rek'
-
-post('/api/peeps', { name: 'James Brown' }).then((person) => {
-  console.log(person.id, person.createdAt)
-})
+rek.post('/api/peeps', { name: 'James Brown' }).json().then((person) => {
+  console.log(person)
+}).catch()
 ```
 
 ## Browsers (CommonJS and ESM) and Node supported
 
-If using Node, make sure to install the optional dependency
+This works in both Browsers and Node because the `main` field in package.json points
+to a file that imports `node-fetch`, while the fields `browser` and `module` points
+to files that do not.
+
+NOTE: If using Node, make sure to install the optional dependency
 [node-fetch](https://github.com/bitinn/node-fetch).
 
 ## Defaults
 
 `rek` defines defaults that are used for every request.
 If you pass an `options` object to any of `rek`s methods
-that `options` object will be merge with the defaults.
+that `options` object will be merged with the defaults.
 
-The defaults are defined as follows:
+The initial defaults are defined as follows:
 
 ```js
-let defaults = {
+const defaults = {
   method: 'GET',
   headers: {
-    'content-type': 'application/json',
-    accept: 'application/json',
     'X-Requested-With': 'XMLHttpRequest'
   },
-  credentials: 'same-origin'
+  credentials: 'same-origin',
 }
 ```
 
 See the [factory](#factory) section below for setting custom defaults.
 
-## Exports
-
-### Named exports
-
-- __del__: make a request using the DELETE method
-- __factory__: returns an object containing all methods with new default
-  options and optionally another [responder](#the-responder)
-- __get__: make a request using the GET method
-- __patch__: make a request using PATCH method
-- __post__: make a request using POST method
-
-### Default export
-
-The default export is the bare `rek` function, but with all other named exports added
-as properties.
-
 ## Usage
 
-All methods are exported as named exports, and as properties
-on a default export.
-
-### Named exports:
+Calling `rek()` doesn't actually start the request and return the request promise. Instead
+it returns a thenable with "aliases" for all body parsing methods. Calling 
+`.then`, `.catch` or `.finally` will start the request and return the promise that resolves
+to the `Response` instance, just like regular `fetch`.
 
 ```js
-import { get, post } from 'rek'
+rek('/edge/of/glory').then(res => {})
 
-get('/api/peeps').then((users) => {
-  console.log(users)
-})
-
-post('/api/peeps', { name: 'James Brown' }).then((user) => {
-  console.log(user.id, user.createdAt)
-})
+const res = await rek('/edge/of/glory')
 ```
 
-### Default export:
+If one of the body methods is called, the correct `Accept` header will be
+set before initiating the request and a promise that resolves to the
+parsed body will be returned.
+
+```js
+rek('/lost/in/time').json().then(json => {})
+
+const json = await rek('/lost/in/time').json()
+
+rek('/under/the/weather').blob().then(blob => {})
+
+const blob = await rek('/under/the/weather').blob()
+```
+
+Depending on parse method called, the following accept headers will be set:
+
+- __arrayBuffer__: \*/\*
+- __blob__: \*/\*
+- __formData__: multipart/form-data
+- __json__: application/json
+- __text__: text/\*
+
+### Automatically JSON.stringify body
+
+If `body` is not a string and the `content-type` header is not set or is set to `application/json`,
+`body` will be `JSON.stringify`:ed and the header will be set to `application/json`
+(in case it is not set).
+
+
+### HTTP Method Aliases
+
+Convenience aliases for all relevant HTTP methods are available as methods on the
+default export. Methods that support sending a body with
+the request have a `body` argument (`body` will overwrite `options.body`).
+
+- __rek.delete(url, options)__
+- __rek.get(url, options)__ (Since method is 'GET' in the initial defaults, this is
+  the same as the initial default export)
+- __rek.head(url, options)__
+- __rek.patch(url, body, options)__
+- __rek.post(url, body, options)__
+- __rek.put(url, body, options)__
 
 ```js
 import rek from 'rek'
 
-// the default http method in the initial defaults is 'GET', ie
-// out of the box the regular `rek` function is equivalent to `rek.get`
-rek('/api/peeps').then((users) => {
+
+rek.delete('/api/peeps/1337').then((users) => {
   console.log(users)
 })
 
-rek.get('/api/peeps').then((users) => {
-  console.log(users)
-})
-
-rek.post('/api/peeps', { name: 'James Brown' }).then((user) => {
-  console.log(user.id, user.createdAt)
+rek.put('/api/peeps/14', { name: 'Max Powers' }).then((user) => {
+  console.log(user.name)
 })
 ```
 
-### factory:
+### Factory:
+
+The factory method on the default export will return a new `rek` with new defaults.
 
 ```js
-factory(defaults, shouldMerge, responder)
-```
+import rek from 'rek'
 
-`shouldMerge` decides whether to merge the passed in defaults with original defaults.
-Pass responder to use custom [responder](#the-responder) instead of the provided.
-
-```js
-import { factory } from 'rek'
-
-// the first call to factory will merge with initial defaults
-const rek = factory({
+const myRek = rek.factory({
   headers: {
     'content-type': 'application/x-www-form-urlencoded',
     accept: 'application/html',
     'X-Requested-With': 'XMLHttpRequest',
   },
   credentials: 'omit',
-}, true)
+})
 
-const { del, get, patch, post } = rek
-
-// the following will merge newDefaults with the latest
-// defaults, not initial defaults
-const another = rek.factory(newDefaults, true)
+myRek()
+myRek.delete()
+myRek.patch()
 ```
 
-or 
-
-```js
-import defaultRek from 'rek'
-
-const rek = defaultRek.factory(defaults)
-const { factory, del, get, patch, post } = rek
-```
-
-The factory will return a new `rek` function with it's own factory. Calling
-this returned factory will merge defaults with previous factories defaults.
-
-## The responder
-
-The responder uses the headers to decide what to do with the response from server.
-
-See [src/responder.js](https://github.com/lohfu/rek/blob/master/src/responder.js) for implementation details.
 
 ## Credits
 
