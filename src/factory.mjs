@@ -80,7 +80,7 @@ export default function factory (defaults = {}) {
   })
 
   dataMethods.forEach((method) => {
-    rek[method] = (url, body, options) => rek(url, Object.assign({ body }, options, { method: method.toUpperCase() }))
+    rek[method] = (url, body, options) => rek(url, Object.assign({}, options, { body, method: method.toUpperCase() }))
   })
 
   rek.factory = factory
