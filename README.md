@@ -1,7 +1,7 @@
 # rek
 
 Tiny  convience wrapper around the Fetch API aiming to
-reduce boilerplate. The UMD build is ~808 bytes gzipped.
+reduce boilerplate. The UMD build is ~811 bytes gzipped.
 
 ## Install
 
