@@ -10,7 +10,7 @@ export default {
       mainFields: [ 'module', 'browser', 'main' ],
     }),
   ],
-  input: 'src/index.mjs',
+  input: 'src/browser.mjs',
   output: {
     format: 'umd',
     name: 'rek',

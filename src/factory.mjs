@@ -18,7 +18,15 @@ const responseTypes = {
   text: 'text/*',
 }
 
-function FetchError (response) {
+const defaultDefaults = {
+  method: 'GET',
+  headers: {
+    'X-Requested-With': 'XMLHttpRequest',
+  },
+  credentials: 'same-origin',
+}
+
+export function FetchError (response) {
   Error.captureStackTrace(this, FetchError)
 
   this.name = 'FetchError'
@@ -31,7 +39,7 @@ FetchError.prototype = Object.create(Error.prototype)
 FetchError.prototype.constructor = FetchError
 
 export default function factory (defaults, api) {
-  defaults = defaults || {}
+  defaults = defaults || defaultDefaults
   api = api || window
 
   const fetch = api.fetch
