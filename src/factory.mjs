@@ -30,17 +30,23 @@ function FetchError (response) {
 FetchError.prototype = Object.create(Error.prototype)
 FetchError.prototype.constructor = FetchError
 
-function makeRequest (url, options) {
-  return fetch(url, options).then(res => {
-    if (!res.ok) {
-      throw new FetchError(res)
-    }
+export default function factory (defaults, api) {
+  defaults = defaults || {}
+  api = api || window
 
-    return res
-  })
-}
+  const fetch = api.fetch
+  const Headers = api.Headers
 
-export default function factory (defaults = {}) {
+  function makeRequest (url, options) {
+    return fetch(url, options).then(res => {
+      if (!res.ok) {
+        throw new FetchError(res)
+      }
+
+      return res
+    })
+  }
+
   function rek (url, options) {
     options = Object.assign({}, defaults, options)
 
