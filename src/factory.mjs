@@ -30,7 +30,7 @@ function FetchError (response) {
 FetchError.prototype = Object.create(Error.prototype)
 FetchError.prototype.constructor = FetchError
 
-function run (url, options) {
+function makeRequest (url, options) {
   return fetch(url, options).then(res => {
     if (!res.ok) {
       throw new FetchError(res)
@@ -59,9 +59,9 @@ export default function factory (defaults = {}) {
     }
 
     const obj = {
-      then: (onResolved, onRejected) => run(url, options).then(onResolved, onRejected),
-      catch: (onRejected) => run(url, options).catch(onRejected),
-      finally: (onFinally) => run(url, options).finally(onFinally),
+      then: (onResolved, onRejected) => makeRequest(url, options).then(onResolved, onRejected),
+      catch: (onRejected) => makeRequest(url, options).catch(onRejected),
+      finally: (onFinally) => makeRequest(url, options).finally(onFinally),
     }
 
     for (const type in responseTypes) {
@@ -70,7 +70,7 @@ export default function factory (defaults = {}) {
           headers.set('accept', responseTypes[type])
         }
 
-        return run(url, options).then(res => res[type]())
+        return makeRequest(url, options).then(res => res[type]())
       }
     }
 
