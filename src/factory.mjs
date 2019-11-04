@@ -56,7 +56,7 @@ export default function factory(defaults, api) {
 
     const headers = (options.headers = new Headers(Object.assign({}, defaults.headers, options.headers)))
 
-    const { body } = options
+    const body = options.body
 
     if (
       body &&
