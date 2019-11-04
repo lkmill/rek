@@ -1,14 +1,6 @@
-const requestMethods = [
-  'delete',
-  'get',
-  'head',
-]
+const requestMethods = ['delete', 'get', 'head']
 
-const dataMethods = [
-  'patch',
-  'post',
-  'put',
-]
+const dataMethods = ['patch', 'post', 'put']
 
 const responseTypes = {
   arrayBuffer: '*/*',
@@ -26,7 +18,7 @@ const defaultDefaults = {
   credentials: 'same-origin',
 }
 
-export function FetchError (response) {
+export function FetchError(response) {
   Error.captureStackTrace(this, FetchError)
 
   this.name = 'FetchError'
@@ -38,14 +30,14 @@ export function FetchError (response) {
 FetchError.prototype = Object.create(Error.prototype)
 FetchError.prototype.constructor = FetchError
 
-export default function factory (defaults, api) {
+export default function factory(defaults, api) {
   defaults = defaults || defaultDefaults
   api = api || window
 
   const fetch = api.fetch
   const Headers = api.Headers
 
-  function makeRequest (url, options) {
+  function makeRequest(url, options) {
     return fetch(url, options).then(res => {
       if (!res.ok) {
         throw new FetchError(res)
@@ -55,18 +47,22 @@ export default function factory (defaults, api) {
     })
   }
 
-  function rek (url, options) {
+  function rek(url, options) {
     options = Object.assign({}, defaults, options)
 
     if (options.baseUrl) {
-      url = (new URL(url, options.baseUrl)).href
+      url = new URL(url, options.baseUrl).href
     }
 
-    const headers = options.headers = new Headers(Object.assign({}, defaults.headers, options.headers))
+    const headers = (options.headers = new Headers(Object.assign({}, defaults.headers, options.headers)))
 
     const { body } = options
 
-    if (body && typeof body !== 'string' && (!headers.has('content-type') || headers.get('content-type').includes('application/json'))) {
+    if (
+      body &&
+      typeof body !== 'string' &&
+      (!headers.has('content-type') || headers.get('content-type').includes('application/json'))
+    ) {
       headers.set('content-type', 'application/json')
 
       options.body = JSON.stringify(body)
@@ -74,8 +70,8 @@ export default function factory (defaults, api) {
 
     const obj = {
       then: (onResolved, onRejected) => makeRequest(url, options).then(onResolved, onRejected),
-      catch: (onRejected) => makeRequest(url, options).catch(onRejected),
-      finally: (onFinally) => makeRequest(url, options).finally(onFinally),
+      catch: onRejected => makeRequest(url, options).catch(onRejected),
+      finally: onFinally => makeRequest(url, options).finally(onFinally),
     }
 
     for (const type in responseTypes) {
@@ -91,11 +87,11 @@ export default function factory (defaults, api) {
     return obj
   }
 
-  requestMethods.forEach((method) => {
+  requestMethods.forEach(method => {
     rek[method] = (url, options) => rek(url, Object.assign({}, options, { method: method.toUpperCase() }))
   })
 
-  dataMethods.forEach((method) => {
+  dataMethods.forEach(method => {
     rek[method] = (url, body, options) => rek(url, Object.assign({}, options, { body, method: method.toUpperCase() }))
   })
 

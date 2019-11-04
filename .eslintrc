@@ -1,12 +1,10 @@
 {
-  "extends": [ "standard" ],
+  "extends": [ "standard", "prettier" ],
 
   "rules": {
-    "comma-dangle": [ 2, "always-multiline" ]
-  },
-
-  "globals": {
-    "fetch": true,
-    "Headers": true
+    "import/no-unresolved": 2,
+    "no-unused-vars": 0,
+    "no-var": 2,
+    "prefer-const": 2
   }
 }
