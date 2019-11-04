@@ -93,7 +93,13 @@ export default function factory(defaults, api) {
     rek[method] = (url, body, options) => rek(url, Object.assign({}, options, { body, method: method.toUpperCase() }))
   })
 
+  rek.extend = (newDefaults, newApi) =>
+    factory(
+      newDefaults ? Object.assign({}, defaults, newDefaults) : defaults,
+      newApi ? Object.assign({}, api, newApi) : api,
+    )
   rek.factory = factory
+  rek.getArgs = () => [defaults, api]
 
   return rek
 }
