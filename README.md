@@ -1,7 +1,7 @@
 # rek
 
 Tiny  convience wrapper around the Fetch API aiming to
-reduce boilerplate. The UMD build is ~811 bytes gzipped.
+reduce boilerplate. The UMD build is 844 bytes gzipped.
 
 ## Install
 
@@ -97,7 +97,8 @@ See the [factory](#factory) section below for setting custom defaults.
 ## Usage
 
 Calling `rek()` doesn't actually start the request and return the request promise. Instead
-it returns a thenable with "aliases" for all body parsing methods. Calling 
+it returns a thenable with "aliases" for all body parsing methods, which for all intents and purposes
+behaves exactly like a promise. Awaiting, passing it to `Promise.all` or calling 
 `.then`, `.catch` or `.finally` will start the request and return the promise that resolves
 to the `Response` instance, just like regular `fetch`.
 
@@ -105,6 +106,11 @@ to the `Response` instance, just like regular `fetch`.
 rek('/edge/of/glory').then(res => {})
 
 const res = await rek('/edge/of/glory')
+
+Promise.all([
+  rek('/power/of/grayskull'),
+  rek('/i/have/the/power'),
+]).then(results => {...})
 ```
 
 If one of the body methods is called, the correct `Accept` header will be
@@ -112,11 +118,11 @@ set before initiating the request and a promise that resolves to the
 parsed body will be returned.
 
 ```js
-rek('/lost/in/time').json().then(json => {})
+rek('/lost/in/time').json().then(json => {...})
 
 const json = await rek('/lost/in/time').json()
 
-rek('/under/the/weather').blob().then(blob => {})
+rek('/under/the/weather').blob().then(blob => {...})
 
 const blob = await rek('/under/the/weather').blob()
 ```
@@ -132,8 +138,7 @@ Depending on parse method called, the following accept headers will be set:
 ### Automatically JSON.stringify body
 
 If `body` is not a string and the `content-type` header is not set or is set to `application/json`,
-`body` will be `JSON.stringify`:ed and the header will be set to `application/json`
-(in case it is not set).
+`body` will be `JSON.stringify`:ed and the header will be set to `application/json`.
 
 
 ### HTTP Method Aliases
@@ -165,9 +170,12 @@ rek.put('/api/peeps/14', { name: 'Max Powers' }).then((user) => {
 
 ### Factory:
 
-The factory method on the default export will return a new `rek` with new defaults.
+The default export has 3 methods, `factory`, `extend` and `getArgs`.
+
+The factory method will return a new `rek` with completely new defaults.
 
 ```js
+import fancyFetch, { FancyHeaders } from 'fancy-fetch'
 import rek from 'rek'
 
 const myRek = rek.factory({
@@ -177,11 +185,38 @@ const myRek = rek.factory({
     'X-Requested-With': 'XMLHttpRequest',
   },
   credentials: 'omit',
+}, {
+  fetch: fancyfetch,
+  Headers: FancyHeaders,
 })
 
 myRek()
 myRek.delete()
 myRek.patch()
+```
+
+The extend method will return a new `rek` with defaults merged with the previous values.
+
+```js
+import { FancyHeaders } from 'fancy-fetch'
+import rek from 'rek'
+
+const myRek = rek.factory({
+  credentials: 'omit',
+}, {
+  Headers: FancyHeaders,
+})
+
+myRek()
+myRek.delete()
+myRek.patch()
+```
+
+
+The `getArgs` method returns the current arguments.
+
+```js
+const [ defaults, api ] = rek.getArgs()
 ```
 
 ### baseUrl
