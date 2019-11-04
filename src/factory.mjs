@@ -76,9 +76,7 @@ export default function factory(defaults, api) {
 
     for (const type in responseTypes) {
       obj[type] = () => {
-        if (!headers.has('accept')) {
-          headers.set('accept', responseTypes[type])
-        }
+        headers.set('accept', responseTypes[type])
 
         return makeRequest(url, options).then(res => res[type]())
       }
