@@ -1,5 +1,6 @@
+import { URL } from 'url'
 import fetch, { Headers } from 'node-fetch'
 
 import factory from './factory'
 
-export default factory(undefined, { fetch, Headers })
+export default factory(undefined, { fetch, Headers, URL })

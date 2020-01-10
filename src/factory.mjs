@@ -36,6 +36,7 @@ export default function factory(defaults, api) {
 
   const fetch = api.fetch
   const Headers = api.Headers
+  const URL = api.URL
 
   function makeRequest(url, options) {
     return fetch(url, options).then(res => {
