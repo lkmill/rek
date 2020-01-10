@@ -3,4 +3,4 @@ import fetch, { Headers } from 'node-fetch'
 
 import factory from './factory'
 
-export default factory(undefined, { fetch, Headers, URL })
+export default factory({ credentials: 'same-origin' }, { fetch, Headers, URL })

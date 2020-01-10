@@ -10,10 +10,6 @@ const responseTypes = {
   text: 'text/*',
 }
 
-const defaultDefaults = {
-  credentials: 'same-origin',
-}
-
 export function FetchError(response) {
   this.name = 'FetchError'
   this.message = response.statusText
@@ -26,7 +22,6 @@ FetchError.prototype = Object.create(Error.prototype)
 FetchError.prototype.constructor = FetchError
 
 export default function factory(defaults, api) {
-  defaults = defaults || defaultDefaults
   api = api || window
 
   const fetch = api.fetch
