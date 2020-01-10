@@ -84,10 +84,6 @@ The initial defaults are defined as follows:
 
 ```js
 const defaults = {
-  method: 'GET',
-  headers: {
-    'X-Requested-With': 'XMLHttpRequest'
-  },
   credentials: 'same-origin',
 }
 ```

@@ -11,10 +11,6 @@ const responseTypes = {
 }
 
 const defaultDefaults = {
-  method: 'GET',
-  headers: {
-    'X-Requested-With': 'XMLHttpRequest',
-  },
   credentials: 'same-origin',
 }
 
