@@ -15,12 +15,11 @@ const defaultDefaults = {
 }
 
 export function FetchError(response) {
-  Error.captureStackTrace(this, FetchError)
-
   this.name = 'FetchError'
   this.message = response.statusText
   this.status = response.status
   this.response = response
+  this.stack = new Error().stack
 }
 
 FetchError.prototype = Object.create(Error.prototype)
