@@ -65,6 +65,7 @@ export default function factory(defaults, api) {
     }
 
     const obj = {
+      run: () => makeRequest(url, options),
       then: (onResolved, onRejected) => makeRequest(url, options).then(onResolved, onRejected),
       catch: onRejected => makeRequest(url, options).catch(onRejected),
       finally: onFinally => makeRequest(url, options).finally(onFinally),
