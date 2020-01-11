@@ -1,0 +1,7 @@
+{
+  "name": "rek/node",
+  "private": true,
+  "main": "../cjs/node.js",
+  "module": "../esm/node.mjs",
+  "source": "../src/node.mjs"
+}

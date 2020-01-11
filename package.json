@@ -2,9 +2,13 @@
   "name": "rek",
   "version": "0.4.3",
   "description": "Wrapper around the Fetch API",
-  "main": "cjs/node.js",
-  "browser": "cjs/browser.js",
-  "module": "esm/browser.mjs",
+  "main": "./cjs/browser.js",
+  "module": "./esm/browser.mjs",
+  "source": "./src/browser.mjs",
+  "exports": {
+    ".": "./cjs/browser.js",
+    "./node": "./cjs/node.js"
+  },
   "scripts": {
     "clean": "rimraf cjs dist esm",
     "lint": "eslint src --ext mjs",
