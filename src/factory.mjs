@@ -22,7 +22,11 @@ FetchError.prototype = Object.create(Error.prototype)
 FetchError.prototype.constructor = FetchError
 
 export default function factory(defaults, api) {
-  api = api || window
+  api =
+    api ||
+    (typeof window !== 'undefined' && window) ||
+    (typeof global !== 'undefined' && global) ||
+    (typeof globalThis !== 'undefined' && globalThis)
 
   const fetch = api.fetch
   const Headers = api.Headers
