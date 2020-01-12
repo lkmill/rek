@@ -7,7 +7,8 @@
   "source": "./src/browser.mjs",
   "exports": {
     ".": "./cjs/browser.js",
-    "./node": "./cjs/node.js"
+    "./node": "./cjs/node.js",
+    "./iso": "./cjs/node.js"
   },
   "scripts": {
     "clean": "rimraf cjs dist esm",

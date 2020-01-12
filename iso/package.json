@@ -1,0 +1,6 @@
+{
+  "name": "rek/iso",
+  "private": true,
+  "main": "../cjs/node.js",
+  "module": "../esm/browser.mjs"
+}
