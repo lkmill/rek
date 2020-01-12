@@ -5,6 +5,7 @@
   "main": "./cjs/browser.js",
   "module": "./esm/browser.mjs",
   "source": "./src/browser.mjs",
+  "types": "./types.d.ts",
   "exports": {
     ".": "./cjs/browser.js",
     "./node": "./cjs/node.js",

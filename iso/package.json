@@ -2,5 +2,6 @@
   "name": "rek/iso",
   "private": true,
   "main": "../cjs/node.js",
-  "module": "../esm/browser.mjs"
+  "module": "../esm/browser.mjs",
+  "types": "../types.d.ts"
 }
