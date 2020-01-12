@@ -1,6 +1,10 @@
 {
   "extends": [ "standard", "prettier" ],
 
+  "globals": {
+    "globalThis": true
+  },
+
   "rules": {
     "import/no-unresolved": 2,
     "no-unused-vars": 0,
