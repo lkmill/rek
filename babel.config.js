@@ -20,9 +20,5 @@ module.exports = {
     esm: {
       presets: [['@babel/env', { modules: false, shippedProposals: true }]],
     },
-
-    umd: {
-      presets: [['@babel/env', { modules: false, shippedProposals: true }]],
-    },
   },
 }
