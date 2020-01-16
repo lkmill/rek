@@ -31,6 +31,7 @@ export default function factory(defaults, api) {
   const fetch = api.fetch
   const Headers = api.Headers
   const URL = api.URL
+  const URLSearchParams = api.URLSearchParams
 
   function makeRequest(url, options) {
     return fetch(url, options).then(res => {
@@ -47,6 +48,10 @@ export default function factory(defaults, api) {
 
     if (options.baseUrl) {
       url = new URL(url, options.baseUrl).href
+    }
+
+    if (options.searchParams) {
+      url = `${url.split('?')[0]}?${new URLSearchParams(options.searchParams)}`
     }
 
     const headers = (options.headers = new Headers(Object.assign({}, defaults.headers, options.headers)))

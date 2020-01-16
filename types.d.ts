@@ -5,12 +5,14 @@ type PlainObject = {
 interface Options extends Omit<RequestInit, 'body'> {
   body?: string | PlainObject
   baseUrl?: string
+  searchParams?: string | PlainObject
 }
 
 interface API {
   fetch(input: RequestInfo, init?: RequestInit): Promise<Response>
-  URL: URL
   Headers: Headers
+  URL: URL
+  URLSearchParams: URLSearchParams
 }
 
 interface RekResponse
