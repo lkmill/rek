@@ -68,6 +68,10 @@ export default function factory(defaults, api) {
       if (contentType.includes('application/json')) {
         options.body = JSON.stringify(body)
       }
+
+      if (contentType.includes('application/x-www-form-urlencoded')) {
+        options.body = new URLSearchParams(options.body)
+      }
     }
 
     const obj = {
