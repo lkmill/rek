@@ -58,14 +58,16 @@ export default function factory(defaults, api) {
 
     const body = options.body
 
-    if (
-      body &&
-      typeof body !== 'string' &&
-      (!headers.has('content-type') || headers.get('content-type').includes('application/json'))
-    ) {
-      headers.set('content-type', 'application/json')
+    if (body && typeof body !== 'string') {
+      let contentType = headers.get('content-type')
 
-      options.body = JSON.stringify(body)
+      if (!contentType) {
+        headers.set('content-type', (contentType = 'application/json'))
+      }
+
+      if (contentType.includes('application/json')) {
+        options.body = JSON.stringify(body)
+      }
     }
 
     const obj = {
