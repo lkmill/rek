@@ -9,7 +9,8 @@
   "exports": {
     ".": "./cjs/browser.js",
     "./node": "./cjs/node.js",
-    "./iso": "./cjs/node.js"
+    "./iso": "./cjs/node.js",
+    "./unfetch": "./cjs/unfetch.js"
   },
   "scripts": {
     "clean": "rimraf cjs dist esm",
@@ -47,7 +48,8 @@
   "homepage": "https://github.com/lohfu/rek#readme",
   "dependencies": {},
   "optionalDependencies": {
-    "node-fetch": "^2.3.0"
+    "node-fetch": "^2.3.0",
+    "unfetch": "^4.1.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.4.3",

@@ -1,4 +1,3 @@
-
 # rek
 
 Tiny convience wrapper around the Fetch API aiming to
@@ -6,8 +5,10 @@ reduce boilerplate.
 
 | Build | Minified | Gzipped |
 |-------|----------|---------|
-| ESM bundle (ES5) | 1.56 kB | 779 B
-| UMD bundle (ES5) | 1.71 kB | 841 B |
+| ESM bundle (ES5) | 1.56 kB | 847 B
+| UMD bundle (ES5) | 1.71 kB | 903 B |
+| Unfetch ESM bundle (ES5) | 3.1 kB | 1.38 kB
+| Unfetch UMD bundle (ES5) | 3.24 kB | 1.42 kB |
 
 ## Table of Contents
 
@@ -23,11 +24,16 @@ reduce boilerplate.
   - [`rek` - Browsers & Deno](#rek---browsers--deno)
   - [`rek/node` - Node.js](#reknode---nodejs)
   - [`rek/iso` - Isomorphic](#rekiso---isomorphic)
+  - [`rek/unfetch` - Uses Unfetch](#rekunfetch---uses-unfetch)
   - [CDN (Unpkg)](#cdn-unpkg-1)
 - [Usage](#usage)
-  - [Options & Defaults](#options--defaults)
+  - [Options](#options)
+    - [`baseUrl`](#baseurl)
+    - [`searchParams`](#searchparams)
+  - [Defaults](#defaults)
+  - [Automatic Body Stringification](#automatic-body-stringification)
   - [HTTP Method Helpers](#http-method-helpers)
-  - [Body Parsing Methods](#body-parsing-methods)
+  - [Response Body Parsing Methods](#response-body-parsing-methods)
 - [Factory](#factory)
   - [.factory](#factory)
   - [.extend](#extend)
@@ -56,6 +62,10 @@ const rek = require('rek/node')
 // both
 import rek from 'rek/iso'
 const rek = require('rek/iso')
+
+// unfetch version
+import rek from 'rek/unfetch'
+const rek = require('rek/unfetch')
 ```
 
 ### CDN (Unpkg)
@@ -175,6 +185,26 @@ should pick up the ESM browser version, while Node.js will use the CommonJS
 version using __node-fetch__. As with the node entry, `node-fetch` needs to be
 manually installed.
 
+### `rek/unfetch` - Uses Unfetch
+
+```js
+import rek from 'rek/iso'
+
+// or
+
+const rek = require('rek/iso')
+```
+
+The `rek/unfetch` subpath uses [unfetch](https://github.com/developit/unfetch)
+internally instead of the native `Fetch API`. Obviously this version
+only supports what `unfetch` supports. Notably only `text`, `blob` and `json`
+body parsing is supported, and the `rek` option `baseUrl` is more basic.
+
+`rek/unfetch` should work in IE8+, as long as Promises have been polyfilled.
+
+See `./src/unfetch.mjs` for details abot the (naive) shims used for `Headers`,
+`URL` and `URLSearchParams`.
+
 ### CDN (Unpkg)
 
 A `./dist` directory is published with entries to be consumed through
@@ -211,6 +241,10 @@ The following builds are available in the dist folder:
 + `./dist/rek.min.js` - Minified UMD bundle
 + `./dist/rek.esm.js` - ESM bundle
 + `./dist/rek.esm.min.js` - Minified ESM bundle
++ `./dist/rek.unfetch.js` - UMD bundle using `unfetch`
++ `./dist/rek.unfetch.min.js` - Minified UMD bundle using `unfetch`
++ `./dist/rek.unfetch.esm.js` - ESM bundle using `unfetch`
++ `./dist/rek.unfetch.esm.min.js` - Minified ESM bundle using `unfetch`
 
 ## Usage
 
@@ -237,16 +271,19 @@ If you really, really MUST have a real promise, an escape hatch is exposed via
 the `.run` method.
 
 ```js
+// Will return a Promise<Response>
 rek(url).run()
 ```
 
-If `body` is not a string and the `content-type` header is not set or is set to
-`application/json`, `body` will be `JSON.stringify`:ed and the `content-type`
-header will be set to `application/json`.
 
-### Options & Defaults
+### Options
 
-Rek supports the same options as fetch and one extra, `baseUrl`. `baseUrl`
+`rek` supports the same options as fetch and two extra, [baseUrl](#baseurl) and
+[searchParams](#searchParams).
+
+#### `baseUrl`
+
+. `baseUrl`
 can be used to set a URL that all relative paths will be resolved
 against. It uses the WHATWG URL to calculate like so:
 
@@ -254,7 +291,7 @@ against. It uses the WHATWG URL to calculate like so:
 url = (new URL(url, options.baseUrl)).href
 ```
 
-Setting this through defaults is very useful for SSR and similar.
+Setting this through `defaults` is very useful for SSR and similar.
 
 ```
 const apiRek = rek.factory({
@@ -262,6 +299,15 @@ const apiRek = rek.factory({
   baseUrl: http://localhost:1337/,
 })
 ```
+
+#### `searchParams`
+
+The `searchParams` option can be used 
+```js
+url = `${url.split('?')[0]}?${new URLSearchParams(options.searchParams)}`
+```
+
+### Defaults
 
 `rek` has defaults that are merged with the options passed to any request. The
 initial defaults are defined as follows:
@@ -273,6 +319,19 @@ const defaults = {
 ```
 
 See the [factory](#factory) section below for setting custom defaults.
+
+### Automatic Body Stringification
+
+The `body` option will be automatically converted to a JSON or query string
+depending on the `content-type` header.
+
+If the `content-type` header is not set or is set to
+`application/json`, `body` will be `JSON.stringify` (if not set the `content-type`
+header will also be set to `application/json`.)
+
+If the `content-type` header is `application/x-www-form-urlencoded`,
+`URLSearchParams` will be used to convert to a query string (`key=value`).
+The `rek/unfetch` entry uses a very simple shim instead.
 
 ### HTTP Method Helpers
 
@@ -300,8 +359,7 @@ rek.post('/api/peeps/14', { name: 'Max Powers' }).then((user) => {
 })
 ```
 
-
-### Body Parsing Methods
+### Response Body Parsing Methods
 
 If one of the 5 [body parsing
 method](https://developer.mozilla.org/en-US/docs/Web/API/Body#Methods) aliases
@@ -404,8 +462,14 @@ const rek3 = rek2.extend({
 The TypeScript types used are as follows:
 
 ```ts
-interface Options extends RequestInit {
+type PlainObject = {
+  [name: string]: any
+}
+
+interface Options extends Omit<RequestInit, 'body'> {
+  body?: string | PlainObject
   baseUrl?: string
+  searchParams?: string | PlainObject
 }
 
 interface API {
@@ -414,7 +478,7 @@ interface API {
   Headers: Headers
 }
 
-interface RekResponse extends Pick<Body, 'arrayBuffer' | 'blob' | 'formData' | 'json' | 'text'>, PromiseLike<Response> {
+interface RekResponse extends Pick<Body, 'arrayBuffer' | 'blob' | 'formData' | 'json' | 'text'>, Pick<Promise<Response>, 'then'> {
   run(): Promise<Response>
 }
 
@@ -432,7 +496,9 @@ export interface Rek {
   getArgs(): [Options, API]
 }
 
-export default function factory(defaults: Options, api: API): Rek
+declare let rek: Rek
+
+export default rek
 ```
 
 ## Credits
