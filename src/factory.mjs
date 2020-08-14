@@ -10,7 +10,7 @@ const responseTypes = {
   text: 'text/*',
 }
 
-export function FetchError(response) {
+export function FetchError(response, details) {
   this.name = 'FetchError'
   this.message = response.statusText
   this.status = response.status
@@ -36,6 +36,11 @@ export default function factory(defaults, api) {
   function makeRequest(url, options) {
     return fetch(url, options).then(res => {
       if (!res.ok) {
+        if (res.headers.get('content-type').includes('application/json')) {
+          return res.json().then(details => {
+            throw new FetchError(res, details)
+          })
+        }
         throw new FetchError(res)
       }
 
@@ -58,7 +63,7 @@ export default function factory(defaults, api) {
 
     const body = options.body
 
-    if (body && typeof body !== 'string') {
+    if (body && typeof body === 'object' && typeof body.append !== 'function') {
       let contentType = headers.get('content-type')
 
       if (!contentType) {
@@ -70,7 +75,7 @@ export default function factory(defaults, api) {
       }
 
       if (contentType.includes('application/x-www-form-urlencoded')) {
-        options.body = new URLSearchParams(options.body)
+        options.body = new URLSearchParams(body)
       }
     }
 
