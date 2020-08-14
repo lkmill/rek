@@ -1,6 +1,6 @@
 {
   "name": "rek",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Wrapper around the Fetch API",
   "main": "./cjs/browser.js",
   "module": "./esm/browser.mjs",
