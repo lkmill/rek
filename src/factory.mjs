@@ -36,7 +36,9 @@ export default function factory(defaults, api) {
   function makeRequest(url, options) {
     return fetch(url, options).then(res => {
       if (!res.ok) {
-        if (res.headers.get('content-type').includes('application/json')) {
+        const contentType = res.headers.get('content-type')
+
+        if (contentType && contentType.includes('application/json')) {
           return res.json().then(details => {
             throw new FetchError(res, details)
           })
