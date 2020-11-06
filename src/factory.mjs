@@ -91,7 +91,7 @@ export default function factory(defaults, api) {
       obj[type] = () => {
         headers.set('accept', responseTypes[type])
 
-        return makeRequest(url, options).then(res => res[type]())
+        return makeRequest(url, options).then(res => (res.status === 204 ? null : res[type]()))
       }
     }
 
