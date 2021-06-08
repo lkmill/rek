@@ -5,6 +5,7 @@ type PlainObject = {
 interface Options extends Omit<RequestInit, 'body'> {
   body?: string | PlainObject
   baseUrl?: string
+  response: 'arrayBuffer' | 'blob' | 'formData' | 'json' | 'text' | false
   searchParams?: string | PlainObject
 }
 
@@ -15,11 +16,7 @@ interface API {
   URLSearchParams: URLSearchParams
 }
 
-interface RekResponse
-  extends Pick<Body, 'arrayBuffer' | 'blob' | 'formData' | 'json' | 'text'>,
-    Pick<Promise<Response>, 'then'> {
-  run(): Promise<Response>
-}
+type RekResponse = Promise<ArrayBuffer | Blob | FormData | PlainObject | Response | string>
 
 export interface Rek {
   (url: string, options?: Options): RekResponse

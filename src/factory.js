@@ -72,20 +72,15 @@ export default function factory(defaults, api) {
       }
     }
 
-    const obj = {
-      run: () => makeRequest(url, options),
-      then: (onResolved, onRejected) => makeRequest(url, options).then(onResolved, onRejected),
-    }
+    if (options.response === false) return makeRequest(url, options)
 
-    for (const type in responseTypes) {
-      obj[type] = () => {
-        headers.set('accept', responseTypes[type])
+    const response = options.response || 'json'
 
-        return makeRequest(url, options).then((res) => (res.status === 204 ? null : res[type]()))
-      }
-    }
+    if (!(response in responseTypes)) throw new Error('Unknown response type: ' + response)
 
-    return obj
+    headers.set('accept', responseTypes[response])
+
+    return makeRequest(url, options).then((res) => (res.status === 204 ? null : res[response]()))
   }
 
   requestMethods.forEach((method) => {
