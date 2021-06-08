@@ -27,14 +27,19 @@ export default function factory(defaults, api) {
   function makeRequest(url, options) {
     return fetch(url, options).then((res) => {
       if (!res.ok) {
-        const contentType = res.headers.get('content-type')
-
-        if (contentType && contentType.includes('application/json')) {
-          return res.json().then((details) => {
-            throw new FetchError(res, details)
+        return res
+          .text()
+          .then((text) => {
+            try {
+              return JSON.parse(text)
+            } catch {
+              return text
+            }
           })
-        }
-        throw new FetchError(res)
+          .catch(() => {})
+          .then((body) => {
+            throw new FetchError(res, body)
+          })
       }
 
       return res
