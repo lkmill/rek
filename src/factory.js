@@ -13,17 +13,7 @@ const responseTypes = {
 }
 
 export default function factory(defaults, api) {
-  api =
-    api ||
-    (typeof window !== 'undefined' && window) ||
-    (typeof global !== 'undefined' && global) ||
-    (typeof globalThis !== 'undefined' && globalThis)
-
-  const fetch = api.fetch
-  const FormData = api.FormData
-  const Headers = api.Headers
-  const URL = api.URL
-  const URLSearchParams = api.URLSearchParams
+  const { fetch, FormData, Headers, URL, URLSearchParams } = api
 
   function makeRequest(url, options) {
     return fetch(url, options).then((res) => {

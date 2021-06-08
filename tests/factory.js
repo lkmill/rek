@@ -15,7 +15,7 @@ class FakeHeaders extends Map {
 }
 
 test('returns a function', (t) => {
-  t.equal(typeof factory(), 'function', 'is a function')
+  t.equal(typeof factory({}, {}), 'function', 'is a function')
 
   t.end()
 })

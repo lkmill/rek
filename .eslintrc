@@ -3,6 +3,10 @@
 
   "extends": ["standard", "prettier"],
 
+  "globals": {
+    "self": true
+  },
+
   "rules": {
     "import/no-unresolved": 2,
     "no-var": 2,
