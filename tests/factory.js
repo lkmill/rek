@@ -164,6 +164,90 @@ test('removes content-type when body is URLSearchParams or FormData', (t) => {
   t.end()
 })
 
+test('.extend()', (t) => {
+  t.test('.extend(defaults, api)', (ts) => {
+    const fetch = sinon.fake.returns({ then: () => ({ then: () => {} }) })
+    const Headers = sinon.fake((headers) => new Map(Object.entries(headers)))
+    const initialApi = { fetch, Headers }
+    const initialDefaults = { response: 'text' }
+    const url = '/'
+    const rek = factory(initialDefaults, initialApi)
+
+    rek(url)
+
+    ts.equals(fetch.callCount, 1, 'original fetch called')
+    ts.equals(Headers.callCount, 1, 'Headers called')
+    ts.ok(fetch.lastCall.calledWith(url, sinon.match(initialDefaults)))
+
+    const newDefaults = { method: 'post' }
+
+    let newRek = rek.extend(newDefaults)
+
+    newRek(url)
+
+    ts.equals(fetch.callCount, 2, 'original fetch called')
+    ts.equals(Headers.callCount, 2, 'Headers called')
+    ts.ok(fetch.lastCall.calledWith(url, sinon.match({ ...initialDefaults, ...newDefaults })))
+
+    const newFetch = sinon.fake.returns({ then: () => ({ then: () => {} }) })
+
+    newRek = newRek.extend(null, { fetch: newFetch })
+
+    newRek(url)
+
+    ts.equals(fetch.callCount, 2, 'original fetch not called again')
+    ts.equals(newFetch.callCount, 1, 'new fetch called')
+    ts.equals(Headers.callCount, 3, 'Headers called')
+    ts.ok(fetch.lastCall.calledWith(url, sinon.match({ ...initialDefaults, ...newDefaults })), 'uses new defaults')
+
+    ts.end()
+  })
+
+  t.test('.extend(() => [])', (ts) => {
+    const fetch = sinon.fake.returns({ then: () => ({ then: () => {} }) })
+    const Headers = sinon.fake((headers) => new Map(Object.entries(headers)))
+    const initialApi = { fetch, Headers }
+    const initialDefaults = { response: 'text' }
+    const url = '/'
+    const rek = factory(initialDefaults, initialApi)
+
+    rek.extend((defaults, api) => {
+      ts.equals(defaults, initialDefaults, 'passes defaults argument to callback')
+      ts.equals(api, initialApi, 'passes api argument to callback')
+
+      return [defaults, api]
+    })
+
+    const newDefaults = { method: 'post' }
+    let newRek = rek.extend((defaults, api) => [
+      {
+        ...defaults,
+        ...newDefaults,
+      },
+      api,
+    ])
+
+    newRek(url)
+
+    ts.equals(fetch.callCount, 1, 'original fetch called')
+    ts.equals(Headers.callCount, 1, 'Headers called')
+    ts.ok(fetch.lastCall.calledWith(url, sinon.match({ ...initialDefaults, ...newDefaults })))
+
+    const newFetch = sinon.fake.returns({ then: () => ({ then: () => {} }) })
+
+    newRek = newRek.extend(null, { fetch: newFetch })
+
+    newRek(url)
+
+    ts.equals(fetch.callCount, 1, 'original fetch not called again')
+    ts.equals(newFetch.callCount, 1, 'new fetch called')
+    ts.equals(Headers.callCount, 2, 'Headers called')
+    ts.ok(fetch.lastCall.calledWith(url, sinon.match({ ...initialDefaults, ...newDefaults })), 'uses new defaults')
+
+    ts.end()
+  })
+})
+
 test('error', async (t) => {
   const baseResponse = {
     ok: false,

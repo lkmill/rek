@@ -87,12 +87,12 @@ export default function factory(defaults, api) {
   })
 
   rek.extend = (newDefaults, newApi) =>
-    factory(
-      newDefaults ? Object.assign({}, defaults, newDefaults) : defaults,
-      newApi ? Object.assign({}, api, newApi) : api,
+    factory.apply(
+      this,
+      typeof newDefaults === 'function'
+        ? newDefaults(defaults, api)
+        : [Object.assign({}, defaults, newDefaults), Object.assign({}, api, newApi)],
     )
-  rek.factory = factory
-  rek.getArgs = () => [defaults, api]
 
   return rek
 }

@@ -28,9 +28,8 @@ export interface Rek {
   post(url: string, body?: any, options?: Options): RekResponse
   put(url: string, body?: any, options?: Options): RekResponse
 
-  factory(defaults?: Options, api?: API): Rek
-  extend(newDefaults?: Options, newApi?: API): Rek
-  getArgs(): [Options, API]
+  extend(defaults?: Options, api: API): Rek
+  extend(fnc: (defaults?: Options, api?: API) => [Options, API]): Rek
 }
 
 declare let rek: Rek
