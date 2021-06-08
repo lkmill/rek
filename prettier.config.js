@@ -7,10 +7,12 @@ module.exports = {
   singleQuote: true,
   trailingComma: 'all',
 
-  overrides: [{
-    files: '*.scss',
-    options: {
-      trailingComma: 'none',
+  overrides: [
+    {
+      files: '*.scss',
+      options: {
+        trailingComma: 'none',
+      },
     },
-  }],
+  ],
 }

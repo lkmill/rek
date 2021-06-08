@@ -35,12 +35,12 @@ export default function factory(defaults, api) {
   const URLSearchParams = api.URLSearchParams
 
   function makeRequest(url, options) {
-    return fetch(url, options).then(res => {
+    return fetch(url, options).then((res) => {
       if (!res.ok) {
         const contentType = res.headers.get('content-type')
 
         if (contentType && contentType.includes('application/json')) {
-          return res.json().then(details => {
+          return res.json().then((details) => {
             throw new FetchError(res, details)
           })
         }
@@ -91,18 +91,18 @@ export default function factory(defaults, api) {
       obj[type] = () => {
         headers.set('accept', responseTypes[type])
 
-        return makeRequest(url, options).then(res => (res.status === 204 ? null : res[type]()))
+        return makeRequest(url, options).then((res) => (res.status === 204 ? null : res[type]()))
       }
     }
 
     return obj
   }
 
-  requestMethods.forEach(method => {
+  requestMethods.forEach((method) => {
     rek[method] = (url, options) => rek(url, Object.assign({}, options, { method: method.toUpperCase() }))
   })
 
-  dataMethods.forEach(method => {
+  dataMethods.forEach((method) => {
     rek[method] = (url, body, options) => rek(url, Object.assign({}, options, { body, method: method.toUpperCase() }))
   })
 

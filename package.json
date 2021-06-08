@@ -12,6 +12,7 @@
   },
   "scripts": {
     "clean": "rimraf cjs dist esm",
+    "format": "prettier --write .",
     "lint": "eslint src --ext mjs",
     "build": "npm run build:cjs && npm run build:esm && npm run build:dist",
     "build:cjs": "BABEL_ENV=cjs babel src -s --out-dir cjs",
