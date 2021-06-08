@@ -1,4 +1,4 @@
-import FetchError from './error.mjs'
+import FetchError from './error.js'
 
 const requestMethods = ['delete', 'get', 'head']
 

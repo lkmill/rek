@@ -1,4 +1,4 @@
-import babel from '@rollup/plugin-babel'
+import { babel } from '@rollup/plugin-babel'
 import nodeResolve from '@rollup/plugin-node-resolve'
 import { terser } from 'rollup-plugin-terser'
 import { uglify } from 'rollup-plugin-uglify'
@@ -16,7 +16,7 @@ const plugins = [
 export default [
   {
     plugins,
-    input: 'src/browser.mjs',
+    input: 'src/browser.js',
     output: [
       {
         file: 'dist/rek.js',

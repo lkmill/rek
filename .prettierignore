@@ -3,13 +3,15 @@ dist
 esm
 dump
 *.*
+!*.cjs
 !*.css
-!*.scss
 !*.html
 !*.js
 !*.json
 !*.jsx
+!*.mjs
+!*.scss
 !*.ts
 !*.tsx
-!*.yml
 !*.yaml
+!*.yml

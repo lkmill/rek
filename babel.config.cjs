@@ -10,7 +10,7 @@ module.exports = {
           'module-resolver',
           {
             resolvePath(sourcePath, currentFile, opts) {
-              return sourcePath.endsWith('.mjs') ? sourcePath.slice(0, -4) : sourcePath
+              return sourcePath.endsWith('.js') ? sourcePath.slice(0, -2) + 'cjs' : sourcePath
             },
           },
         ],
