@@ -1,3 +1,5 @@
+import FetchError from './error.mjs'
+
 const requestMethods = ['delete', 'get', 'head']
 
 const dataMethods = ['patch', 'post', 'put']
@@ -9,18 +11,6 @@ const responseTypes = {
   json: 'application/json',
   text: 'text/*',
 }
-
-export function FetchError(response, details) {
-  this.name = 'FetchError'
-  this.message = response.statusText
-  this.status = response.status
-  Object.assign(this, details)
-  this.response = response
-  this.stack = new Error().stack
-}
-
-FetchError.prototype = Object.create(Error.prototype)
-FetchError.prototype.constructor = FetchError
 
 export default function factory(defaults, api) {
   api =
