@@ -1,7 +1,6 @@
 import FetchError from './error.js'
 
 const requestMethods = ['delete', 'get', 'head']
-
 const dataMethods = ['patch', 'post', 'put']
 
 const responseTypes = {
@@ -45,7 +44,7 @@ export default function factory(defaults, api) {
     }
 
     if (options.searchParams) {
-      url = `${url.split('?')[0]}?${new URLSearchParams(options.searchParams)}`
+      url = url.split('?')[0] + '?' + new URLSearchParams(options.searchParams)
     }
 
     const headers = (options.headers = new Headers(Object.assign({}, defaults.headers, options.headers)))
