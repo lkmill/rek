@@ -3,22 +3,35 @@
   "version": "0.5.3",
   "description": "Wrapper around the Fetch API",
   "type": "module",
-  "main": "./cjs/browser.cjs",
-  "module": "./esm/browser.js",
-  "source": "./src/browser.js",
-  "types": "./types.d.ts",
+  "main": "./dist/node.cjs",
   "exports": {
-    ".": "./cjs/browser.cjs",
-    "./node": "./cjs/node.cjs"
+    ".": [
+      {
+        "node": {
+          "require": "./dist/node.cjs",
+          "default": "./dist/node.js"
+        },
+        "default": {
+          "require": "./dist/browser.cjs",
+          "default": "./dist/browser.js"
+        }
+      },
+      "./dist/browser.js"
+    ],
+    "./error": "./dist/error.cjs",
+    "./factory": "./dist/factory.cjs"
   },
+  "module": "./dist/browser.js",
+  "unpkg": "./dist/rek.umd.min.js",
+  "types": "./types.d.ts",
   "scripts": {
-    "clean": "rimraf cjs dist esm",
+    "build": "npm run build:cjs && npm run build:esm && npm run build:rollup",
+    "build:cjs": "BABEL_ENV=cjs babel src -s --out-file-extension .cjs --out-dir dist",
+    "build:esm": "BABEL_ENV=esm babel src/{browser,node}.js -s --out-dir dist",
+    "build:rollup": "rollup -c",
+    "clean": "rimraf dist",
     "format": "prettier --write .",
     "lint": "eslint --ext .cjs --ext .js --ext .mjs .",
-    "build": "npm run build:cjs && npm run build:esm && npm run build:dist",
-    "build:cjs": "BABEL_ENV=cjs babel src -s --out-file-extension .cjs --out-dir cjs",
-    "build:esm": "BABEL_ENV=esm babel src -s --out-dir esm",
-    "build:dist": "BABEL_ENV=esm rollup -c",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepublish": "npm run clean && npm run lint && npm run build",
     "preversion": "npm run lint"
@@ -52,8 +65,8 @@
     "@babel/preset-env": "^7.4.3",
     "@rollup/plugin-babel": "^5.3.0",
     "@rollup/plugin-node-resolve": "^13.0.0",
-    "babel-plugin-add-module-exports": "^1.0.2",
     "babel-plugin-module-resolver": "^4.0.0",
+    "babel-plugin-transform-es2015-modules-simple-commonjs": "^0.3.0",
     "eslint": "^7.28.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-config-standard": "^16.0.3",

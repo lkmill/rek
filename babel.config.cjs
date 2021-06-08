@@ -1,11 +1,38 @@
 'use strict'
 
+const { resolve } = require('path')
+
+const presetEnvConfig = {
+  targets: { chrome: 79, edge: 16, firefox: 60, opera: 48, safari: '10.1' },
+  modules: false,
+  shippedProposals: true,
+}
+
+const entryFiles = ['./src/browser.js', './src/node.js'].map((file) => resolve(file))
+const cjsFiles = ['./error.js', './factory.js']
+
+function removeNamedExports() {
+  return {
+    visitor: {
+      ImportDeclaration(path, _ref) {
+        if (!entryFiles.includes(_ref.file.opts.filename)) return
+
+        if (path.node.source.value === './error.cjs') path.remove()
+      },
+      ExportNamedDeclaration(path) {
+        path.remove()
+      },
+    },
+  }
+}
+
 module.exports = {
+  presets: [['@babel/env', presetEnvConfig]],
   env: {
     cjs: {
-      presets: [['@babel/env', { modules: 'commonjs', shippedProposals: true }]],
       plugins: [
-        'add-module-exports',
+        removeNamedExports,
+        'babel-plugin-transform-es2015-modules-simple-commonjs',
         [
           'module-resolver',
           {
@@ -16,9 +43,20 @@ module.exports = {
         ],
       ],
     },
-
     esm: {
-      presets: [['@babel/env', { modules: false, shippedProposals: true }]],
+      plugins: [
+        [
+          'module-resolver',
+          {
+            resolvePath(sourcePath, currentFile, opts) {
+              return cjsFiles.includes(sourcePath) ? sourcePath.slice(0, -2) + 'cjs' : sourcePath
+            },
+          },
+        ],
+      ],
+    },
+    umd: {
+      plugins: [removeNamedExports],
     },
   },
 }

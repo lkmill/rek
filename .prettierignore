@@ -1,6 +1,4 @@
-cjs
 dist
-esm
 dump
 *.*
 !*.cjs
