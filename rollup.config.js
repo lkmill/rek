@@ -43,34 +43,4 @@ export default [
       },
     ],
   },
-  {
-    plugins,
-    input: 'src/unfetch',
-    output: [
-      {
-        file: 'dist/rek.unfetch.js',
-        sourcemap: true,
-        format: 'umd',
-        name: 'rek',
-      },
-      {
-        file: 'dist/rek.unfetch.min.js',
-        sourcemap: true,
-        format: 'umd',
-        name: 'rek',
-        plugins: [uglify()],
-      },
-      {
-        file: 'dist/rek.unfetch.esm.js',
-        sourcemap: true,
-        format: 'esm',
-      },
-      {
-        file: 'dist/rek.unfetch.esm.min.js',
-        sourcemap: true,
-        format: 'esm',
-        plugins: [terser()],
-      },
-    ],
-  },
 ]

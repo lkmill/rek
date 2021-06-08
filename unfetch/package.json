@@ -1,7 +1,0 @@
-{
-  "name": "rek/unfetch",
-  "private": true,
-  "main": "../cjs/unfetch.js",
-  "module": "../esm/unfetch.mjs",
-  "types": "../types.d.ts"
-}

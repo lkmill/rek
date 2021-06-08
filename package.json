@@ -8,9 +8,7 @@
   "types": "./types.d.ts",
   "exports": {
     ".": "./cjs/browser.js",
-    "./node": "./cjs/node.js",
-    "./iso": "./cjs/node.js",
-    "./unfetch": "./cjs/unfetch.js"
+    "./node": "./cjs/node.js"
   },
   "scripts": {
     "clean": "rimraf cjs dist esm",
@@ -46,11 +44,6 @@
     "url": "https://github.com/lohfu/rek/issues"
   },
   "homepage": "https://github.com/lohfu/rek#readme",
-  "dependencies": {},
-  "optionalDependencies": {
-    "node-fetch": "^2.3.0",
-    "unfetch": "^4.1.0"
-  },
   "devDependencies": {
     "@babel/cli": "^7.4.3",
     "@babel/core": "^7.4.3",
