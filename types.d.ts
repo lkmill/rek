@@ -11,6 +11,7 @@ interface Options extends Omit<RequestInit, 'body'> {
 
 interface API {
   fetch(input: RequestInfo, init?: RequestInit): Promise<Response>
+  FormData: FormData
   Headers: Headers
   URL: URL
   URLSearchParams: URLSearchParams

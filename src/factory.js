@@ -20,6 +20,7 @@ export default function factory(defaults, api) {
     (typeof globalThis !== 'undefined' && globalThis)
 
   const fetch = api.fetch
+  const FormData = api.FormData
   const Headers = api.Headers
   const URL = api.URL
   const URLSearchParams = api.URLSearchParams
@@ -61,19 +62,19 @@ export default function factory(defaults, api) {
 
     const body = options.body
 
-    if (body && typeof body === 'object' && typeof body.append !== 'function') {
-      let contentType = headers.get('content-type')
+    if (typeof body === 'object') {
+      const prototype = Object.getPrototypeOf(body)
 
-      if (!contentType) {
-        headers.set('content-type', (contentType = 'application/json'))
-      }
+      if (prototype === null || prototype === Object.prototype) {
+        if (!headers.has('content-type')) {
+          headers.set('content-type', 'application/json')
+        }
 
-      if (contentType.includes('application/json')) {
-        options.body = JSON.stringify(body)
-      }
-
-      if (contentType.includes('application/x-www-form-urlencoded')) {
-        options.body = new URLSearchParams(body)
+        if (headers.get('content-type').includes('application/json')) {
+          options.body = JSON.stringify(body)
+        }
+      } else if ((FormData && body instanceof FormData) || body instanceof URLSearchParams) {
+        headers.delete('content-type')
       }
     }
 

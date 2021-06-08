@@ -84,6 +84,86 @@ test('http method helpers', async (t) => {
   }
 })
 
+test('stringifies plain object body', (t) => {
+  const fetch = sinon.fake.returns({ then: () => ({ then: () => {} }) })
+  const rek = factory({}, { fetch, Headers: FakeHeaders })
+  const url = '/a/deeper/url'
+  let init = {
+    headers: {
+      'content-type': 'application/json',
+    },
+    method: 'POST',
+    body: { hello: 'again', another: 'prop' },
+  }
+
+  rek(url, {
+    ...init,
+  })
+
+  let args = fetch.lastCall.args
+
+  t.equals(args[1].body, JSON.stringify(init.body), 'stringifies when content-type is set to "application/json"')
+
+  init = {
+    method: 'POST',
+    body: { hello: 'again', another: 'prop' },
+  }
+  rek(url, init)
+
+  args = fetch.lastCall.args
+
+  t.equals(
+    args[1].headers.get('content-type'),
+    'application/json',
+    'sets content-type header to "application/json" if it is not set and body is a plain object',
+  )
+  t.equals(args[1].body, JSON.stringify(init.body), 'stringifies when no content-type and plain object body')
+
+  t.end()
+})
+
+test('removes content-type when body is URLSearchParams or FormData', (t) => {
+  class OtherClass {}
+  class FakeFormData {}
+  const fetch = sinon.fake.returns({ then: () => ({ then: () => {} }) })
+  const rek = factory({}, { fetch, Headers: FakeHeaders, FormData: FakeFormData, URLSearchParams })
+
+  let init = {
+    headers: { 'content-type': 'multipart/form-data' },
+    body: new URLSearchParams({ param: 1, param2: 2 }),
+  }
+
+  rek('/', init)
+
+  let args = fetch.lastCall.args
+
+  t.notOk(args[1].headers.has('content-type'), 'content-type header removed when body is URLSearchParams')
+
+  init = {
+    headers: { 'content-type': 'multipart/form-data' },
+    body: new FakeFormData(),
+  }
+
+  rek('/', init)
+
+  args = fetch.lastCall.args
+
+  t.notOk(args[1].headers.has('content-type'), 'content-type header removed when body is FormData')
+
+  init = {
+    headers: { 'content-type': 'multipart/form-data' },
+    body: new OtherClass(),
+  }
+
+  rek('/', init)
+
+  args = fetch.lastCall.args
+
+  t.ok(args[1].headers.has('content-type'), 'content-type header not remove for other type')
+
+  t.end()
+})
+
 test('error', async (t) => {
   const baseResponse = {
     ok: false,
