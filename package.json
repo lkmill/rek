@@ -78,6 +78,7 @@
     "rollup": "^2.51.1",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-uglify": "^6.0.4",
+    "sinon": "^11.1.1",
     "tape": "lohfu/tape#esm-support"
   }
 }
