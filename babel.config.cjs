@@ -1,5 +1,4 @@
-'use strict'
-
+const { parse } = require('@babel/parser')
 const { resolve } = require('path')
 
 const presetEnvConfig = {
@@ -21,6 +20,32 @@ function removeNamedExports() {
       },
       ExportNamedDeclaration(path) {
         path.remove()
+      },
+    },
+  }
+}
+
+function simpleClassTransform() {
+  return {
+    visitor: {
+      ClassDeclaration(path) {
+        if (path.node.id?.name !== 'FetchError') return
+
+        const ast = parse(`
+function FetchError(response, body) {
+  this.name = 'FetchError'
+  this.message = response.statusText
+  this.status = response.status
+  this.body = body
+  this.response = response
+  this.stack = new Error().stack
+}
+
+FetchError.prototype = Object.create(Error.prototype)
+FetchError.prototype.constructor = FetchError
+`)
+
+        path.replaceWith(ast.program.body[0])
       },
     },
   }
@@ -57,6 +82,16 @@ module.exports = {
     },
     umd: {
       plugins: [removeNamedExports],
+    },
+
+    'umd:es5': {
+      presets: [
+        [
+          '@babel/env',
+          { ...presetEnvConfig, exclude: ['transform-classes', 'transform-typeof-symbol'], targets: { ie: 11 } },
+        ],
+      ],
+      plugins: [removeNamedExports, simpleClassTransform],
     },
   },
 }

@@ -59,7 +59,7 @@ export default function factory(defaults, api) {
           headers.set('content-type', 'application/json')
         }
 
-        if (headers.get('content-type').includes('application/json')) {
+        if (headers.get('content-type').indexOf('application/json') > -1) {
           options.body = JSON.stringify(body)
         }
       } else if ((FormData && body instanceof FormData) || body instanceof URLSearchParams) {

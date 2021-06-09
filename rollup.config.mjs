@@ -54,4 +54,30 @@ export default [
       },
     ],
   },
+  {
+    input: 'src/browser.js',
+    plugins: [
+      babel({
+        ...babelConfig.env['umd:es5'],
+        babelHelpers: 'bundled',
+        exclude: 'node_modules/**/*',
+      }),
+      nodeResolve(),
+    ],
+    output: [
+      {
+        file: 'dist/rek.umd.es5.js',
+        sourcemap: true,
+        format: 'umd',
+        name: 'rek',
+      },
+      {
+        file: 'dist/rek.umd.es5.min.js',
+        sourcemap: true,
+        format: 'umd',
+        name: 'rek',
+        plugins: [uglify()],
+      },
+    ],
+  },
 ]
