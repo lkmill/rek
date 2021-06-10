@@ -69,15 +69,23 @@ export default function factory(defaults, api) {
 
     const response = options.response
 
-    if (response) {
-      if (!(response in responseTypes)) throw new Error('Unknown response type: ' + response)
+    let onFullfilled
 
-      headers.set('accept', responseTypes[response])
+    if (response) {
+      if (typeof response === 'function') {
+        onFullfilled = response
+      } else if (response in responseTypes) {
+        headers.set('accept', responseTypes[response])
+
+        onFullfilled = (res) => (res.status === 204 ? null : res[response]())
+      } else {
+        throw new Error('Unknown response type: ' + response)
+      }
     }
 
     const res = makeRequest(url, options)
 
-    return response ? res.then((res) => (res.status === 204 ? null : res[response]())) : res
+    return onFullfilled ? res.then(onFullfilled) : res
   }
 
   requestMethods.forEach((method) => {

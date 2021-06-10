@@ -301,7 +301,8 @@ expression used to delimit form fields in the request body).
 
 Sets how to parse the response body.  It needs to be either
 a valid `Body` [read
-method](https://developer.mozilla.org/en-US/docs/Web/API/Body#methods) name or
+method](https://developer.mozilla.org/en-US/docs/Web/API/Body#methods) name, a function
+accepting the response or
 falsy if the response should be returned without parsing the body. In the `rek`
 instance returned by the main entry, `response` defaults to 'json'.
 
@@ -316,6 +317,8 @@ await rek('/url', { response: 'blob' }) instanceof Blob
 rek('/url', { response: 'invalid response' })
 
 await rek('/url', { response: false }) instanceof Response
+
+await rek('/url', { response: (res) => 'return value' }) === 'return value'
 ```
 
 Depending on the `response`, the following `Accept` header will be set:

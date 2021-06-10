@@ -14,6 +14,14 @@ class FakeHeaders extends Map {
   }
 }
 
+function createFetch(response) {
+  const fetch = sinon.fake(() => Promise.resolve(response))
+
+  fetch.setResponse = (newResponse) => (response = newResponse)
+
+  return fetch
+}
+
 test('returns a function', (t) => {
   t.equal(typeof factory({}, {}), 'function', 'is a function')
 
@@ -32,20 +40,21 @@ test('response type', async (t) => {
   )
 
   const fakeResponse = { ok: true, json: () => Promise.resolve({}) }
+  const fetch = createFetch(fakeResponse)
 
-  rek = factory({}, { fetch: sinon.fake.resolves(fakeResponse), Headers: FakeHeaders })
+  rek = factory({}, { fetch, Headers: FakeHeaders })
 
   let res = await rek('/')
 
-  t.equals(res, fakeResponse, 'defaults to no parsing, ie returns the response')
+  t.equal(res, fakeResponse, 'defaults to no parsing, ie returns the response')
 
   res = await rek('/', { response: false })
 
-  t.equals(res, fakeResponse, 'returns the response instance when `response: false`')
+  t.equal(res, fakeResponse, 'returns the response instance when `response: false`')
 
   res = await rek('/', { response: null })
 
-  t.equals(res, fakeResponse, 'returns the response instance when `response: null`')
+  t.equal(res, fakeResponse, 'returns the response instance when `response: null`')
 
   for (const type of responseTypes) {
     t.test(`.${type}()`, async (ts) => {
@@ -56,10 +65,35 @@ test('response type', async (t) => {
       const accept = 'application/msword'
       await rek('/', { headers: { accept }, response: type })
 
-      ts.notEquals(fetch.lastCall.args[1].headers.get('accept'), accept, 'changes accept header')
+      ts.notEqual(fetch.lastCall.args[1].headers.get('accept'), accept, 'changes accept header')
       ts.ok(bodyMethod.calledOnce, `res.${type}() called`)
     })
   }
+
+  const result = {}
+  const responder = sinon.fake.returns(result)
+
+  res = await rek('/', { response: responder })
+
+  t.equal(responder.callCount, 1, '`response` function called once')
+  t.ok(responder.calledWith(fakeResponse), '`response` function called with Response')
+  t.equal(res, result, 'resolves to `response` functions return value')
+
+  const newResponse = { ok: true, status: 204 }
+
+  fetch.setResponse(newResponse)
+
+  res = await rek('/', { response: 'json' })
+
+  t.equal(res, null, 'resolves to null when status 204 and `response` set to a valid read method')
+
+  res = await rek('/', { response: false })
+
+  t.equal(res, newResponse, 'resolves to Response when status 204 and `response` is falsy')
+
+  res = await rek('/', { response: responder })
+
+  t.ok(responder.calledWith(newResponse), 'response function called with Response when status 204')
 })
 
 test('http method helpers', async (t) => {
