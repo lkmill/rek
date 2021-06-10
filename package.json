@@ -32,7 +32,7 @@
     "clean": "rimraf dist",
     "format": "prettier --write .",
     "lint": "eslint --ext .cjs --ext .js --ext .mjs .",
-    "prepublish": "npm run clean && npm run lint && npm run test && npm run build",
+    "prepublishOnly": "npm run clean && npm run lint && npm run test && npm run build",
     "preversion": "npm run lint",
     "test": "tape tests/*"
   },
