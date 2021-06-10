@@ -150,6 +150,24 @@ import rek, { FetchError } from 'rek'
 const rek = require('rek')
 ```
 
+The browser/Deno version is created using (see [factory](#factory) for details):
+
+```js
+export default factory({ credentials: 'same-origin',  response: 'json' }, self)
+```
+
+The Node version is created using:
+
+```js
+import { URL, URLSearchParams } from 'url'
+import fetch from 'node-fetch'
+
+export default factory(
+  { credentials: 'same-origin', response: 'json' },
+  { fetch, Headers: fetch.Headers, URL, URLSearchParams },
+)
+```
+
 ### 'rek/error'
 
 Exports the `FetchError`. Both `import` and `require` will load
@@ -284,8 +302,8 @@ expression used to delimit form fields in the request body).
 Sets how to parse the response body.  It needs to be either
 a valid `Body` [read
 method](https://developer.mozilla.org/en-US/docs/Web/API/Body#methods) name or
-`false` if the response should be returned without parsing the body. It
-defaults to 'json' (even if it has not been set in `defaults` or `options`).
+falsy if the response should be returned without parsing the body. In the `rek`
+instance returned by the main entry, `response` defaults to 'json'.
 
 ```js
 typeof await rek('/url') === 'object' // is JSON
@@ -296,6 +314,8 @@ await rek('/url', { response: 'blob' }) instanceof Blob
 
 // will throw
 rek('/url', { response: 'invalid response' })
+
+await rek('/url', { response: false }) instanceof Response
 ```
 
 Depending on the `response`, the following `Accept` header will be set:

@@ -31,13 +31,21 @@ test('response type', async (t) => {
     'errors on invalid response type',
   )
 
-  const fakeResponse = { ok: true }
+  const fakeResponse = { ok: true, json: () => Promise.resolve({}) }
 
   rek = factory({}, { fetch: sinon.fake.resolves(fakeResponse), Headers: FakeHeaders })
 
-  const res = await rek('/', { response: false })
+  let res = await rek('/')
 
-  t.ok(res === fakeResponse, 'returns the response instance when `response: false`')
+  t.equals(res, fakeResponse, 'defaults to no parsing, ie returns the response')
+
+  res = await rek('/', { response: false })
+
+  t.equals(res, fakeResponse, 'returns the response instance when `response: false`')
+
+  res = await rek('/', { response: null })
+
+  t.equals(res, fakeResponse, 'returns the response instance when `response: null`')
 
   for (const type of responseTypes) {
     t.test(`.${type}()`, async (ts) => {
@@ -48,7 +56,7 @@ test('response type', async (t) => {
       const accept = 'application/msword'
       await rek('/', { headers: { accept }, response: type })
 
-      ts.ok(fetch.lastCall.args[1].headers.get('accept') !== accept, 'changes accept header')
+      ts.notEquals(fetch.lastCall.args[1].headers.get('accept'), accept, 'changes accept header')
       ts.ok(bodyMethod.calledOnce, `res.${type}() called`)
     })
   }
