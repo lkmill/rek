@@ -51,7 +51,7 @@ export default function factory(defaults, api) {
 
     const body = options.body
 
-    if (typeof body === 'object') {
+    if (body && typeof body === 'object') {
       const prototype = Object.getPrototypeOf(body)
 
       if (prototype === null || prototype === Object.prototype) {
