@@ -3,13 +3,29 @@
 
   "extends": ["standard", "prettier"],
 
-  "globals": {
-    "self": true
+  "env": {
+    "browser": true
   },
 
   "rules": {
     "import/no-unresolved": 2,
+    "no-undef": 2,
     "no-var": 2,
     "prefer-const": 2
-  }
+  },
+
+  "overrides": [
+    {
+      "files": "*.ts",
+      "parser": "@typescript-eslint/parser",
+      "parserOptions": {
+        "project": "./tsconfig.json"
+      },
+      "plugins": ["@typescript-eslint"],
+      "rules": {
+        "no-use-before-define": 0,
+        "@typescript-eslint/no-use-before-define": [2]
+      }
+    }
+  ]
 }

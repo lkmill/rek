@@ -23,23 +23,34 @@
   },
   "module": "./dist/browser.js",
   "unpkg": "./dist/rek.umd.min.js",
-  "types": "./types.d.ts",
+  "types": "./dist/browser.d.ts",
+  "typesVersions": {
+    "*": {
+      "dist/browser.d.ts": [
+        "./dist/browser.d.ts"
+      ],
+      "*": [
+        "./dist/*"
+      ]
+    }
+  },
   "scripts": {
-    "build": "npm run build:cjs && npm run build:esm && npm run build:rollup",
+    "build": "npm run build:cjs && npm run build:esm && npm run build:rollup && npm run build:types",
     "build:cjs": "BABEL_ENV=cjs babel src -s --out-file-extension .cjs --out-dir dist",
     "build:esm": "BABEL_ENV=esm babel src/{browser,node}.js -s --out-dir dist",
     "build:rollup": "rollup -c",
+    "build:types": "tsc",
     "clean": "rimraf dist",
     "format": "prettier --write .",
-    "lint": "eslint --ext .cjs --ext .js --ext .mjs .",
+    "lint": "eslint --ext .cjs --ext .js --ext .mjs --ext .ts .",
     "prepare": "husky install",
     "prepublishOnly": "npm run clean && npm run lint && npm run test && npm run build",
     "preversion": "npm run lint",
     "test": "tape tests/*"
   },
   "lint-staged": {
-    "*.{cjs,js,mjs}": "eslint --cache --fix",
-    "*.{cjs,js,json,mjs}": "prettier --write"
+    "*.{cjs,js,mjs,ts}": "eslint --cache --fix",
+    "*.{cjs,js,json,mjs,ts}": "prettier --write"
   },
   "repository": {
     "type": "git",
@@ -70,6 +81,8 @@
     "@babel/preset-env": "^7.4.3",
     "@rollup/plugin-babel": "^5.3.0",
     "@rollup/plugin-node-resolve": "^13.0.0",
+    "@typescript-eslint/eslint-plugin": "^4.27.0",
+    "@typescript-eslint/parser": "^4.27.0",
     "babel-plugin-module-resolver": "^4.0.0",
     "babel-plugin-transform-es2015-modules-simple-commonjs": "^0.3.0",
     "eslint": "^7.28.0",
@@ -86,6 +99,7 @@
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-uglify": "^6.0.4",
     "sinon": "^11.1.1",
-    "tape": "lohfu/tape#esm-support"
+    "tape": "lohfu/tape#esm-support",
+    "typescript": "^4.3.2"
   }
 }

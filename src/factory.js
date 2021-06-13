@@ -11,6 +11,17 @@ const responseTypes = {
   text: 'text/*',
 }
 
+/**
+ * @typedef {import('./types').Options} Options
+ * @typedef {import('./types').API} API
+ * @typedef {import('./types').Rek} Rek
+ */
+
+/**
+ * @param {Options | null | undefined} defaults
+ * @param {API} api
+ * @returns {Rek}
+ */
 export default function factory(defaults, api) {
   const { fetch, FormData, Headers, URL, URLSearchParams } = api
 

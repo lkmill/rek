@@ -6,9 +6,9 @@ reduce boilerplate, especially when sending and receiving JSON.
 
 | Build            | Unminified | Minified | Gzipped |
 | ---------------- | ---------- | -------- | ------- |
-| ESM bundle       | 3.21 kB    | 1.65 kB  | 885 B   |
-| UMD bundle       | 3.71 kB    | 1.80 kB  | 942 B   |
-| UMD bundle (ES5) | 4.01 kB    | 1.94 kB  | 959 B   |
+| ESM bundle       | 3.65 kB    | 1.65 kB  | 885 B   |
+| UMD bundle       | 4.19 kB    | 1.80 kB  | 942 B   |
+| UMD bundle (ES5) | 4.41 kB    | 1.94 kB  | 959 B   |
 
 ## Table of Contents
 
@@ -37,7 +37,6 @@ reduce boilerplate, especially when sending and receiving JSON.
     - [`searchParams`](#searchparams)
   - [.extend(defaults, api) || .extend(fnc)](#extenddefaults-api--extendfnc)
   - [Factory](#factory)
-- [TypeScript](#typescript)
 - [Credits](#credits)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -168,6 +167,12 @@ export default factory(
 )
 ```
 
+The main entry exposes TypeScript types:
+
+```ts
+import { API, Options, Rek } from 'rek'
+```
+
 ### 'rek/error'
 
 Exports the `FetchError`. Both `import` and `require` will load
@@ -194,6 +199,12 @@ import factory from 'rek/factory'
 const factory = require('rek/factory')
 // legacy
 const factory = require('rek/dist/factory.cjs')
+```
+
+The factory entry also exposes TypeScript types:
+
+```ts
+import { API, Options, Rek } from 'rek'
 ```
 
 ### CDN (Unpkg)
@@ -406,46 +417,10 @@ const myRek = factory({ ... }, globalThis)
 
 ## TypeScript
 
-The TypeScript types used are as follows:
+The main entry exposes most types
 
-```ts
-type PlainObject = {
-  [name: string]: any
-}
-
-interface Options extends Omit<RequestInit, 'body'> {
-  body?: string | PlainObject
-  baseUrl?: string
-  response: 'arrayBuffer' | 'blob' | 'formData' | 'json' | 'text' | false
-  searchParams?: string | PlainObject
-}
-
-interface API {
-  fetch(input: RequestInfo, init?: RequestInit): Promise<Response>
-  FormData: FormData
-  Headers: Headers
-  URL: URL
-  URLSearchParams: URLSearchParams
-}
-
-type RekResponse = Promise<ArrayBuffer | Blob | FormData | PlainObject | Response | string>
-
-export interface Rek {
-  (url: string, options?: Options): RekResponse
-  delete(url: string, options?: Options): RekResponse
-  get(url: string, options?: Options): RekResponse
-  head(url: string, options?: Options): RekResponse
-  patch(url: string, body?: any, options?: Options): RekResponse
-  post(url: string, body?: any, options?: Options): RekResponse
-  put(url: string, body?: any, options?: Options): RekResponse
-
-  extend(defaults?: Options, api: API): Rek
-  extend(fnc: (defaults?: Options, api?: API) => [Options, API]): Rek
-}
-
-declare let rek: Rek
-
-export default rek
+```js
+import { API, Options, Rek } from 
 ```
 
 ## Credits
