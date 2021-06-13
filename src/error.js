@@ -1,4 +1,8 @@
 class FetchError extends Error {
+  /**
+   * @param {Response} response
+   * @param {any} [body]
+   */
   constructor(response, body) {
     super(response.statusText)
     this.name = 'FetchError'
