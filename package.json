@@ -1,6 +1,6 @@
 {
   "name": "rek",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "description": "Wrapper around the Fetch API",
   "type": "module",
   "main": "./dist/node.cjs",
