@@ -259,6 +259,19 @@ test('body handling', (t) => {
   t.end()
 })
 
+test('pass response type as string instead of options object', (t) => {
+  const fetch = sinon.fake.returns({ then: () => ({ then: () => {} }) })
+  const rek = factory({}, { fetch, Headers: FakeHeaders })
+  const type = 'blob'
+
+  rek('/', type)
+
+  const args = fetch.lastCall.args
+
+  t.equal(args[1].response, type, 'shit')
+  t.end()
+})
+
 test('.extend()', (t) => {
   t.test('.extend(defaults, api)', (ts) => {
     const fetch = sinon.fake.returns({ then: () => ({ then: () => {} }) })

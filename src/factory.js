@@ -48,6 +48,8 @@ export default function factory(defaults, api) {
   }
 
   function rek(url, options) {
+    if (typeof options === 'string') options = { response: options }
+
     options = Object.assign({}, defaults, options)
 
     if (options.baseUrl) {

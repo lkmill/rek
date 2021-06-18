@@ -6,10 +6,12 @@ interface JSONObject {
   [key: string]: ValidJSON
 }
 
+type responseType = 'arrayBuffer' | 'blob' | 'formData' | 'json' | 'text'
+
 export declare interface Options extends Omit<RequestInit, 'body'> {
   baseUrl?: string
   body?: BodyInit | any
-  response?: 'arrayBuffer' | 'blob' | 'formData' | 'json' | 'text' | null | ((res: Response) => any)
+  response?: responseType | null | ((res: Response) => any)
   searchParams?: JSONObject | URLSearchParams | string
 }
 
@@ -22,13 +24,13 @@ export declare interface API {
 
 export type WithoutBodyMethod = <Type = ArrayBuffer | Blob | FormData | ValidJSON | Response | string | null>(
   url: string,
-  options?: Options,
+  options?: Options | responseType,
 ) => Promise<Type>
 
 export type BodyMethod = <Type = ArrayBuffer | Blob | FormData | ValidJSON | Response | string | null>(
   url: string,
   body?: BodyInit | any,
-  options?: Options,
+  options?: Options | responseType,
 ) => Promise<Type>
 
 export declare interface Rek extends WithoutBodyMethod {

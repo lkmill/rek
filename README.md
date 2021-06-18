@@ -6,9 +6,9 @@ reduce boilerplate, especially when sending and receiving JSON.
 
 | Build            | Unminified | Minified | Gzipped |
 | ---------------- | ---------- | -------- | ------- |
-| ESM bundle       | 3.54 kB    | 1.60 kB  | 847 B   |
-| UMD bundle       | 4.08 kB    | 1.75 kB  | 904 B   |
-| UMD bundle (ES5) | 4.32 kB    | 1.89 kB  | 926 B   |
+| ESM bundle       | 3.63 kB    | 1.64 kB  | 862 B   |
+| UMD bundle       | 4.17 kB    | 1.78 kB  | 919 B   |
+| UMD bundle (ES5) | 4.41 kB    | 1.92 kB  | 938 B   |
 
 ## Table of Contents
 
@@ -301,6 +301,15 @@ options:
 `body` differently to native `fetch()`.
 
 Options passed to `rek` will be merged with the `defaults` defined in the [factory](#factory).
+
+If a string is passed as option argument, a new object is created with
+`response` set to that string.
+
+```js
+rek('/', 'text')
+// is the same
+rek('/', { response: 'text' })
+```
 
 #### `baseUrl`
 
