@@ -6,9 +6,9 @@ reduce boilerplate, especially when sending and receiving JSON.
 
 | Build            | Unminified | Minified | Gzipped |
 | ---------------- | ---------- | -------- | ------- |
-| ESM bundle       | 3.65 kB    | 1.65 kB  | 885 B   |
-| UMD bundle       | 4.19 kB    | 1.80 kB  | 942 B   |
-| UMD bundle (ES5) | 4.41 kB    | 1.94 kB  | 959 B   |
+| ESM bundle       | 3.50 kB    | 1.53 kB  | 832 B   |
+| UMD bundle       | 4.02 kB    | 1.68 kB  | 887 B   |
+| UMD bundle (ES5) | 4.23 kB    | 1.82 kB  | 905 B   |
 
 ## Table of Contents
 
@@ -301,12 +301,17 @@ Setting this in `defaults` is very useful for SSR and similar.
 
 #### `body`
 
-If `body` is a plain object, `rek` will convert it to a JSON string if the
-`content-type` header is not set or is set and contains `application/json` (if
-not set, it will be set to `application/json`).  If `body` is of type
-`FormData` or `URLSearchParams`, then `content-type` will be unset (setting
-`content-type` prevents the browser setting `content-type` with the boundary
-expression used to delimit form fields in the request body).
+Depending on the type of body passed, it could be converted to a JSON string
+and the `content-type` header could be removed or set
+
++ __FormData || URLSearchParams__: `body` will not be modified but
+  `content-type` will be unset (setting `content-type` prevents the browser
+  setting `content-type` with the boundary expression used to delimit form
+  fields in the request body).
++ __Blob || ReadableStream__: Neither `body` nor `content-type` will be
+  modified.
++ __All other (object) types__: `body` will be converted to a JSON string, and
+  `content-type` will be set to `application/json` (even if it is already set).
 
 #### `response`
 

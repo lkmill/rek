@@ -23,7 +23,7 @@ const responseTypes = {
  * @returns {Rek}
  */
 export default function factory(defaults, api) {
-  const { fetch, FormData, Headers, URL, URLSearchParams } = api
+  const { fetch, Headers, URL, URLSearchParams } = api
 
   function makeRequest(url, options) {
     return fetch(url, options).then((res) => {
@@ -63,18 +63,12 @@ export default function factory(defaults, api) {
     const body = options.body
 
     if (body && typeof body === 'object') {
-      const prototype = Object.getPrototypeOf(body)
-
-      if (prototype === null || prototype === Object.prototype) {
-        if (!headers.has('content-type')) {
-          headers.set('content-type', 'application/json')
-        }
-
-        if (headers.get('content-type').indexOf('application/json') > -1) {
-          options.body = JSON.stringify(body)
-        }
-      } else if ((FormData && body instanceof FormData) || body instanceof URLSearchParams) {
-        headers.delete('content-type')
+      // check if FormData or URLSearchParams
+      if (typeof body.append === 'function') headers.delete('content-type')
+      // check if ReadableStream (.tee()) or Blob (.stream())
+      else if (typeof (body.getReader || body.stream) !== 'function') {
+        options.body = JSON.stringify(body)
+        headers.set('content-type', 'application/json')
       }
     }
 

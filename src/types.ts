@@ -8,14 +8,13 @@ interface JSONObject {
 
 export declare interface Options extends Omit<RequestInit, 'body'> {
   baseUrl?: string
-  body?: BodyInit | ValidJSON
+  body?: BodyInit | any
   response?: 'arrayBuffer' | 'blob' | 'formData' | 'json' | 'text' | null | ((res: Response) => any)
   searchParams?: JSONObject | URLSearchParams | string
 }
 
 export declare interface API {
   fetch(input: RequestInfo, init?: RequestInit): Promise<Response>
-  FormData?: FormData
   Headers: Headers
   URL: URL
   URLSearchParams: URLSearchParams
@@ -28,7 +27,7 @@ export type WithoutBodyMethod = <Type = ArrayBuffer | Blob | FormData | ValidJSO
 
 export type BodyMethod = <Type = ArrayBuffer | Blob | FormData | ValidJSON | Response | string | null>(
   url: string,
-  body?: BodyInit | ValidJSON,
+  body?: BodyInit | any,
   options?: Options,
 ) => Promise<Type>
 

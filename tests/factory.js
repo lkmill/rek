@@ -126,49 +126,18 @@ test('http method helpers', async (t) => {
   }
 })
 
-test('stringifies plain object body', (t) => {
+test('body handling', (t) => {
+  class FakeFormData {
+    append() {}
+  }
+  class FakeBlob {
+    stream() {}
+  }
+  class FakeReadableStream {
+    getReader() {}
+  }
   const fetch = sinon.fake.returns({ then: () => ({ then: () => {} }) })
   const rek = factory({}, { fetch, Headers: FakeHeaders })
-  const url = '/a/deeper/url'
-  let init = {
-    headers: {
-      'content-type': 'application/json',
-    },
-    method: 'POST',
-    body: { hello: 'again', another: 'prop' },
-  }
-
-  rek(url, {
-    ...init,
-  })
-
-  let args = fetch.lastCall.args
-
-  t.equals(args[1].body, JSON.stringify(init.body), 'stringifies when content-type is set to "application/json"')
-
-  init = {
-    method: 'POST',
-    body: { hello: 'again', another: 'prop' },
-  }
-  rek(url, init)
-
-  args = fetch.lastCall.args
-
-  t.equals(
-    args[1].headers.get('content-type'),
-    'application/json',
-    'sets content-type header to "application/json" if it is not set and body is a plain object',
-  )
-  t.equals(args[1].body, JSON.stringify(init.body), 'stringifies when no content-type and plain object body')
-
-  t.end()
-})
-
-test('removes content-type when body is URLSearchParams or FormData', (t) => {
-  class OtherClass {}
-  class FakeFormData {}
-  const fetch = sinon.fake.returns({ then: () => ({ then: () => {} }) })
-  const rek = factory({}, { fetch, Headers: FakeHeaders, FormData: FakeFormData, URLSearchParams })
 
   let init = {
     headers: { 'content-type': 'multipart/form-data' },
@@ -179,7 +148,8 @@ test('removes content-type when body is URLSearchParams or FormData', (t) => {
 
   let args = fetch.lastCall.args
 
-  t.notOk(args[1].headers.has('content-type'), 'content-type header removed when body is URLSearchParams')
+  t.equal(args[1].body, init.body, 'URLSearchParams is not stringified')
+  t.notOk(args[1].headers.has('content-type'), 'content-type header removed for URLSearchParams')
 
   init = {
     headers: { 'content-type': 'multipart/form-data' },
@@ -190,18 +160,101 @@ test('removes content-type when body is URLSearchParams or FormData', (t) => {
 
   args = fetch.lastCall.args
 
-  t.notOk(args[1].headers.has('content-type'), 'content-type header removed when body is FormData')
+  t.equal(args[1].body, init.body, 'FormData is not stringified')
+  t.notOk(args[1].headers.has('content-type'), 'content-type header removed for FormData')
 
   init = {
-    headers: { 'content-type': 'multipart/form-data' },
-    body: new OtherClass(),
+    headers: { 'content-type': 'image/jpeg' },
+    body: new FakeBlob(),
   }
 
   rek('/', init)
 
   args = fetch.lastCall.args
 
-  t.ok(args[1].headers.has('content-type'), 'content-type header not remove for other type')
+  t.equal(args[1].body, init.body, 'Blob is not stringified')
+  t.equal(
+    args[1].headers.get('content-type'),
+    init.headers['content-type'],
+    'content-type header not modified for Blob',
+  )
+
+  init = {
+    headers: { 'content-type': 'text/plain' },
+    body: new FakeReadableStream(),
+  }
+
+  rek('/', init)
+
+  args = fetch.lastCall.args
+
+  t.equal(args[1].body, init.body, 'ReadableStream is not stringified')
+  t.equal(
+    args[1].headers.get('content-type'),
+    init.headers['content-type'],
+    'content-type header not modified for ReadableStream',
+  )
+
+  init = {
+    headers: {
+      'content-type': 'text/plain',
+    },
+    method: 'POST',
+    body: { hello: 'again', another: 'prop' },
+  }
+
+  rek('/', {
+    ...init,
+  })
+
+  args = fetch.lastCall.args
+
+  t.equals(args[1].body, JSON.stringify(init.body), 'a plain object is stringified')
+  t.equals(args[1].headers.get('content-type'), 'application/json', 'sets application/json header when stringifying')
+
+  init = {
+    method: 'POST',
+    body: { hello: 'again', another: 'prop' },
+  }
+  rek('/', init)
+
+  init = {
+    method: 'POST',
+    body: ['0', '1', 2, '3', { what: 'no' }],
+  }
+  rek('/', init)
+
+  args = fetch.lastCall.args
+
+  t.equals(args[1].body, JSON.stringify(init.body), 'an array is stringified')
+
+  init = {
+    headers: { 'content-type': 'multipart/form-data' },
+    body: new Error('val'),
+  }
+
+  rek('/', init)
+
+  args = fetch.lastCall.args
+
+  t.equal(args[1].body, JSON.stringify(init.body), 'Error is stringified')
+
+  class OtherClass {
+    constructor(value) {
+      this.value = value
+    }
+  }
+
+  init = {
+    headers: { 'content-type': 'multipart/form-data' },
+    body: new OtherClass('val'),
+  }
+
+  rek('/', init)
+
+  args = fetch.lastCall.args
+
+  t.equal(args[1].body, JSON.stringify(init.body), 'OtherClass is stringified')
 
   t.end()
 })
