@@ -6,9 +6,9 @@ reduce boilerplate, especially when sending and receiving JSON.
 
 | Build            | Unminified | Minified | Gzipped |
 | ---------------- | ---------- | -------- | ------- |
-| ESM bundle       | 3.50 kB    | 1.53 kB  | 832 B   |
-| UMD bundle       | 4.02 kB    | 1.68 kB  | 887 B   |
-| UMD bundle (ES5) | 4.23 kB    | 1.82 kB  | 905 B   |
+| ESM bundle       | 3.54 kB    | 1.60 kB  | 847 B   |
+| UMD bundle       | 4.08 kB    | 1.75 kB  | 904 B   |
+| UMD bundle (ES5) | 4.32 kB    | 1.89 kB  | 926 B   |
 
 ## Table of Contents
 
@@ -152,8 +152,17 @@ const rek = require('rek')
 The browser/Deno version is created using (see [factory](#factory) for details):
 
 ```js
+export default factory(
+  { credentials: 'same-origin',  response: 'json' },
+  { fetch, Headers, URL, URLSearchParams },
+)
+// or
 export default factory({ credentials: 'same-origin',  response: 'json' }, self)
 ```
+
+Note: if the global object (such as `self` above) is passed as the API argument
+and `rek.extend()` is later called, the new api will be merged with all
+properties on the global object.
 
 The Node version is created using:
 
