@@ -18,8 +18,6 @@ export declare interface Options extends Omit<RequestInit, 'body'> {
 export declare interface API {
   fetch(input: RequestInfo, init?: RequestInit): Promise<Response>
   Headers: Headers
-  URL: URL
-  URLSearchParams: URLSearchParams
 }
 
 export type WithoutBodyMethod = <Type = ArrayBuffer | Blob | FormData | ValidJSON | Response | string | null>(

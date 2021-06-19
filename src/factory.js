@@ -23,7 +23,7 @@ const responseTypes = {
  * @returns {Rek}
  */
 export default function factory(defaults, api) {
-  const { fetch, Headers, URL, URLSearchParams } = api
+  const { fetch, Headers } = api
 
   function makeRequest(url, options) {
     return fetch(url, options).then((res) => {

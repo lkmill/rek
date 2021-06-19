@@ -6,9 +6,9 @@ reduce boilerplate, especially when sending and receiving JSON.
 
 | Build            | Unminified | Minified | Gzipped |
 | ---------------- | ---------- | -------- | ------- |
-| ESM bundle       | 3.69 kB    | 1.69 kB  | 883 B   |
-| UMD bundle       | 4.24 kB    | 1.83 kB  | 940 B   |
-| UMD bundle (ES5) | 4.48 kB    | 1.97 kB  | 961 B   |
+| ESM bundle       | 3.66 kB    | 1.64 kB  | 868 B   |
+| UMD bundle       | 4.19 kB    | 1.78 kB  | 925 B   |
+| UMD bundle (ES5) | 4.38 kB    | 1.92 kB  | 942 B   |
 
 ## Table of Contents
 
@@ -154,25 +154,18 @@ The browser/Deno version is created using (see [factory](#factory) for details):
 ```js
 export default factory(
   { credentials: 'same-origin',  response: 'json' },
-  { fetch, Headers, URL, URLSearchParams },
+  { fetch, Headers },
 )
-// or
-export default factory({ credentials: 'same-origin',  response: 'json' }, self)
 ```
-
-Note: if the global object (such as `self` above) is passed as the API argument
-and `rek.extend()` is later called, the new api will be merged with all
-properties on the global object.
 
 The Node version is created using:
 
 ```js
-import { URL, URLSearchParams } from 'url'
 import fetch from 'node-fetch'
 
 export default factory(
   { credentials: 'same-origin', response: 'json' },
-  { fetch, Headers: fetch.Headers, URL, URLSearchParams },
+  { fetch, Headers: fetch.Headers },
 )
 ```
 
@@ -433,9 +426,6 @@ const myRek = factory({
 }, {
   fetch: fancyfetch,
   Headers: FancyHeaders,
-  FormData,
-  URL,
-  URLSearchParams
 })
 
 myRek()
