@@ -331,6 +331,18 @@ and the `content-type` header could be removed or set
 + __All other (object) types__: `body` will be converted to a JSON string, and
   `content-type` will be set to `application/json` (even if it is already set).
 
+#### `headers`
+
+Since default headers are merged with headers passed as options and it requires
+significantly more logic to merge Header instances, headers are expected to be
+passed as plain objects.
+
+If Headers are already used, they can be converted to plain objects with:
+
+```js
+Object.fromEntries(headers.entries())
+```
+
 #### `response`
 
 Sets how to parse the response body.  It needs to be either
