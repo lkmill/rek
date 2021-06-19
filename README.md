@@ -6,9 +6,9 @@ reduce boilerplate, especially when sending and receiving JSON.
 
 | Build            | Unminified | Minified | Gzipped |
 | ---------------- | ---------- | -------- | ------- |
-| ESM bundle       | 3.63 kB    | 1.64 kB  | 862 B   |
-| UMD bundle       | 4.17 kB    | 1.78 kB  | 919 B   |
-| UMD bundle (ES5) | 4.41 kB    | 1.92 kB  | 938 B   |
+| ESM bundle       | 3.69 kB    | 1.69 kB  | 883 B   |
+| UMD bundle       | 4.24 kB    | 1.83 kB  | 940 B   |
+| UMD bundle (ES5) | 4.48 kB    | 1.97 kB  | 961 B   |
 
 ## Table of Contents
 
@@ -326,7 +326,7 @@ and the `content-type` header could be removed or set
   `content-type` will be unset (setting `content-type` prevents the browser
   setting `content-type` with the boundary expression used to delimit form
   fields in the request body).
-+ __Blob || ReadableStream__: Neither `body` nor `content-type` will be
++ __ArrayBuffer || Blob || DataView || ReadableStream__: Neither `body` nor `content-type` will be
   modified.
 + __All other (object) types__: `body` will be converted to a JSON string, and
   `content-type` will be set to `application/json` (even if it is already set).

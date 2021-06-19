@@ -67,8 +67,12 @@ export default function factory(defaults, api) {
     if (body && typeof body === 'object') {
       // check if FormData or URLSearchParams
       if (typeof body.append === 'function') headers.delete('content-type')
-      // check if ReadableStream (.tee()) or Blob (.stream())
-      else if (typeof (body.getReader || body.stream) !== 'function') {
+      // check if ReadableStream (.tee()) Blob (.stream()), ArrayBuffer or DataView
+      else if (
+        typeof (body.getReader || body.stream) !== 'function' &&
+        !(body instanceof ArrayBuffer) &&
+        !ArrayBuffer.isView(body)
+      ) {
         options.body = JSON.stringify(body)
         headers.set('content-type', 'application/json')
       }
