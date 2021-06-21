@@ -6,9 +6,9 @@ reduce boilerplate, especially when sending and receiving JSON.
 
 | Build            | Unminified | Minified | Gzipped |
 | ---------------- | ---------- | -------- | ------- |
-| ESM bundle       | 3.66 kB    | 1.64 kB  | 868 B   |
-| UMD bundle       | 4.19 kB    | 1.78 kB  | 925 B   |
-| UMD bundle (ES5) | 4.38 kB    | 1.92 kB  | 942 B   |
+| ESM bundle       | 3.55 kB    | 1.60 kB  | 843 B   |
+| UMD bundle       | 4.08 kB    | 1.75 kB  | 907 B   |
+| UMD bundle (ES5) | 4.23 kB    | 1.88 kB  | 921 B   |
 
 ## Table of Contents
 
@@ -152,10 +152,12 @@ const rek = require('rek')
 The browser/Deno version is created using (see [factory](#factory) for details):
 
 ```js
-export default factory(
-  { credentials: 'same-origin',  response: 'json' },
-  { fetch, Headers },
-)
+export default factory({
+  credentials: 'same-origin',
+  response: 'json',
+  fetch,
+  Headers,
+})
 ```
 
 The Node version is created using:
@@ -163,16 +165,18 @@ The Node version is created using:
 ```js
 import fetch from 'node-fetch'
 
-export default factory(
-  { credentials: 'same-origin', response: 'json' },
-  { fetch, Headers: fetch.Headers },
-)
+export default factory({
+  credentials: 'same-origin',
+  response: 'json',
+  fetch,
+  Headers: fetch.Headers,
+})
 ```
 
-The main entry exposes TypeScript types:
+The main entry exposes most TypeScript types:
 
 ```ts
-import { API, Options, Rek } from 'rek'
+import { Options, Rek } from 'rek'
 ```
 
 ### 'rek/error'
@@ -192,7 +196,7 @@ const FetchError = require('rek/dist/error.cjs')
 ### 'rek/factory'
 
 Exports the [factory](#factory) function that creates `rek` instances with new
-defaults and api. Both `import` and `require` will load `./dist/factory.cjs` in
+defaults. Both `import` and `require` will load `./dist/factory.cjs` in
 all environments.
 
 ```js
@@ -206,7 +210,7 @@ const factory = require('rek/dist/factory.cjs')
 The factory entry also exposes TypeScript types:
 
 ```ts
-import { API, Options, Rek } from 'rek'
+import { Options, Rek } from 'rek'
 ```
 
 ### CDN (Unpkg)
@@ -389,26 +393,16 @@ rek('/url', { searchParams: { foo: 1, bar: 2 } })
 rek('/url', { searchParams: new URLSearchParams({ foo: 1, bar: 2 }) })
 ```
 
-### .extend(defaults, api) || .extend(fnc)
+### .extend(defaults)
 
-The extend method will return a new `rek` instance with arguments (shallow)
-merged with the previous values. If a deep or custom merge is required, pass a
-function returning an array of new arguments instead.
+The extend method will return a new `rek` instance with arguments
+merged with the previous values.
 
 ```js
-// shallow
 const myRek = rek.extend({ baseUrl: 'http://localhost:1337' })
-const myRek = rek.extend({ credentials: 'omit' }, { fetch: myFetch })
-
-// custom
-const myRek = rek.extend((defaults, api) => [{
-  ...defaults,
-  headers: {
-    ...defaults.headers,
-    'authorization': 'Basic YWxhZGRpbjpvcGVuc2VzYW1l', 
-  }
-}, api])
+const myRek = rek.extend({ credentials: 'omit', fetch: myFetch })
 ```
+
 
 ### Factory
 
@@ -423,7 +417,6 @@ const myRek = factory({
     'content-type': 'application/x-www-form-urlencoded',
   },
   credentials: 'omit',
-}, {
   fetch: fancyfetch,
   Headers: FancyHeaders,
 })
@@ -433,19 +426,12 @@ myRek.delete()
 myRek.patch()
 ```
 
-In environments that have all required APIs natively, simply pass the global
-object:
-
-```js
-const myRek = factory({ ... }, globalThis)
-```
-
 ## TypeScript
 
 The main entry exposes most types
 
 ```js
-import { API, Options, Rek } from 
+import { Defaults, Options, Rek } from 'rek'
 ```
 
 ## Credits

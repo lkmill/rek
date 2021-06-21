@@ -13,9 +13,13 @@ export declare interface Options extends Omit<RequestInit, 'body'> {
   body?: BodyInit | any
   response?: responseType | null | ((res: Response) => any)
   searchParams?: JSONObject | URLSearchParams | string
+
+  // api
+  fetch?(input: RequestInfo, init?: RequestInit): Promise<Response>
+  Headers?: Headers
 }
 
-export declare interface API {
+export declare interface Defaults extends Options {
   fetch(input: RequestInfo, init?: RequestInit): Promise<Response>
   Headers: Headers
 }
@@ -39,6 +43,5 @@ export declare interface Rek extends WithoutBodyMethod {
   post: BodyMethod
   put: BodyMethod
 
-  extend(defaults?: Options, api?: API): Rek
-  extend(fnc: (defaults?: Options, api?: API) => [Options, API]): Rek
+  extend(defaults?: Options): Rek
 }

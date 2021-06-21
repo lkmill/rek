@@ -12,21 +12,16 @@ const responseTypes = {
 }
 
 /**
+ * @typedef {import('./types').Defaults} Defaults
  * @typedef {import('./types').Options} Options
- * @typedef {import('./types').API} API
  * @typedef {import('./types').Rek} Rek
- */
-
-/**
- * @param {Options | null | undefined} defaults
- * @param {API} api
+ *
+ * @param {Defaults} defaults
  * @returns {Rek}
  */
-export default function factory(defaults, api) {
-  const { fetch, Headers } = api
-
+export default function factory(defaults) {
   function makeRequest(url, options) {
-    return fetch(url, options).then((res) => {
+    return options.fetch(url, options).then((res) => {
       if (!res.ok) {
         return res
           .text()
@@ -60,7 +55,7 @@ export default function factory(defaults, api) {
       url = url.split('?')[0] + '?' + new URLSearchParams(options.searchParams)
     }
 
-    const headers = (options.headers = new Headers(Object.assign({}, defaults.headers, options.headers)))
+    const headers = (options.headers = new options.Headers(Object.assign({}, defaults.headers, options.headers)))
 
     const body = options.body
 
@@ -107,12 +102,11 @@ export default function factory(defaults, api) {
     rek[method] = (url, body, options) => rek(url, Object.assign({}, options, { body, method: method.toUpperCase() }))
   })
 
-  rek.extend = (newDefaults, newApi) =>
-    factory.apply(
-      this,
-      typeof newDefaults === 'function'
-        ? newDefaults(defaults, api)
-        : [Object.assign({}, defaults, newDefaults), Object.assign({}, api, newApi)],
+  rek.extend = (newDefaults) =>
+    factory(
+      Object.assign({}, defaults, newDefaults, {
+        headers: Object.assign({}, defaults.headers, newDefaults.headers),
+      }),
     )
 
   return rek

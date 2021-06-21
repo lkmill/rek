@@ -29,7 +29,7 @@ test('returns a function', (t) => {
 })
 
 test('response type', async (t) => {
-  let rek = factory({}, { Headers: FakeHeaders })
+  let rek = factory({ Headers: FakeHeaders })
 
   t.throws(
     () => {
@@ -42,7 +42,7 @@ test('response type', async (t) => {
   const fakeResponse = { ok: true, json: () => Promise.resolve({}) }
   const fetch = createFetch(fakeResponse)
 
-  rek = factory({}, { fetch, Headers: FakeHeaders })
+  rek = factory({ fetch, Headers: FakeHeaders })
 
   let res = await rek('/')
 
@@ -60,7 +60,7 @@ test('response type', async (t) => {
     t.test(`.${type}()`, async (ts) => {
       const bodyMethod = sinon.fake.resolves()
       const fetch = sinon.fake.resolves({ ok: true, [type]: bodyMethod })
-      const rek = factory({}, { fetch, Headers: FakeHeaders })
+      const rek = factory({ fetch, Headers: FakeHeaders })
 
       const accept = 'application/msword'
       await rek('/', { headers: { accept }, response: type })
@@ -98,7 +98,7 @@ test('response type', async (t) => {
 
 test('http method helpers', async (t) => {
   const fetch = sinon.fake.returns({ then: () => ({ then: () => {} }) })
-  const rek = factory({}, { fetch, Headers: FakeHeaders })
+  const rek = factory({ fetch, Headers: FakeHeaders })
   const init = { chache: 'no-store', redirect: 'follow' }
   const url = '/'
 
@@ -137,7 +137,7 @@ test('body handling', (t) => {
     getReader() {}
   }
   const fetch = sinon.fake.returns({ then: () => ({ then: () => {} }) })
-  const rek = factory({}, { fetch, Headers: FakeHeaders })
+  const rek = factory({ fetch, Headers: FakeHeaders })
 
   let init = {
     headers: { 'content-type': 'multipart/form-data' },
@@ -293,7 +293,7 @@ test('body handling', (t) => {
 
 test('pass response type as string instead of options object', (t) => {
   const fetch = sinon.fake.returns({ then: () => ({ then: () => {} }) })
-  const rek = factory({}, { fetch, Headers: FakeHeaders })
+  const rek = factory({ fetch, Headers: FakeHeaders })
   const type = 'blob'
 
   rek('/', type)
@@ -305,87 +305,126 @@ test('pass response type as string instead of options object', (t) => {
 })
 
 test('.extend()', (t) => {
-  t.test('.extend(defaults, api)', (ts) => {
-    const fetch = sinon.fake.returns({ then: () => ({ then: () => {} }) })
-    const Headers = sinon.fake((headers) => new Map(Object.entries(headers)))
-    const initialApi = { fetch, Headers }
-    const initialDefaults = { response: 'text' }
-    const url = '/'
-    const rek = factory(initialDefaults, initialApi)
+  const fetch = sinon.fake.returns({ then: () => ({ then: () => {} }) })
+  const Headers = sinon.fake((headers) => new Map(Object.entries(headers)))
+  const initialDefaults = {
+    fetch,
+    Headers,
+    response: null,
+    headers: { 'x-initial': 'infinite', 'x-initial-2': 'more infinite' },
+  }
 
-    rek(url)
+  const url = '/'
+  const rek = factory(initialDefaults)
 
-    ts.equals(fetch.callCount, 1, 'original fetch called')
-    ts.equals(Headers.callCount, 1, 'Headers called')
-    ts.ok(fetch.lastCall.calledWith(url, sinon.match(initialDefaults)))
+  rek(url)
 
-    const newDefaults = { method: 'post' }
+  t.equals(fetch.callCount, 1, 'start: original fetch called')
+  t.equals(Headers.callCount, 1, 'start: Headers called')
+  t.ok(
+    fetch.lastCall.calledWith(
+      url,
+      sinon.match({
+        ...initialDefaults,
+        headers: sinon.match(
+          (headers) =>
+            Array.from(headers.values()).length === 2 &&
+            headers.get('x-initial') === initialDefaults.headers['x-initial'] &&
+            headers.get('x-initial-2') === initialDefaults.headers['x-initial-2'],
+        ),
+      }),
+    ),
+    'start: uses new defaults',
+  )
 
-    let newRek = rek.extend(newDefaults)
+  const newDefaults = {
+    method: 'post',
+    headers: { 'x-new': 'limited', 'x-new-2': 'more limited', 'x-initial-2': 'overwritten by new' },
+  }
 
-    newRek(url)
+  let newRek = rek.extend(newDefaults)
 
-    ts.equals(fetch.callCount, 2, 'original fetch called')
-    ts.equals(Headers.callCount, 2, 'Headers called')
-    ts.ok(fetch.lastCall.calledWith(url, sinon.match({ ...initialDefaults, ...newDefaults })))
+  newRek(url)
 
-    const newFetch = sinon.fake.returns({ then: () => ({ then: () => {} }) })
-
-    newRek = newRek.extend(null, { fetch: newFetch })
-
-    newRek(url)
-
-    ts.equals(fetch.callCount, 2, 'original fetch not called again')
-    ts.equals(newFetch.callCount, 1, 'new fetch called')
-    ts.equals(Headers.callCount, 3, 'Headers called')
-    ts.ok(fetch.lastCall.calledWith(url, sinon.match({ ...initialDefaults, ...newDefaults })), 'uses new defaults')
-
-    ts.end()
-  })
-
-  t.test('.extend(() => [])', (ts) => {
-    const fetch = sinon.fake.returns({ then: () => ({ then: () => {} }) })
-    const Headers = sinon.fake((headers) => new Map(Object.entries(headers)))
-    const initialApi = { fetch, Headers }
-    const initialDefaults = { response: 'text' }
-    const url = '/'
-    const rek = factory(initialDefaults, initialApi)
-
-    rek.extend((defaults, api) => {
-      ts.equals(defaults, initialDefaults, 'passes defaults argument to callback')
-      ts.equals(api, initialApi, 'passes api argument to callback')
-
-      return [defaults, api]
-    })
-
-    const newDefaults = { method: 'post' }
-    let newRek = rek.extend((defaults, api) => [
-      {
-        ...defaults,
+  t.equals(fetch.callCount, 2, 'extend: original fetch called')
+  t.equals(Headers.callCount, 2, 'extend: Headers called')
+  t.ok(
+    fetch.lastCall.calledWith(
+      url,
+      sinon.match({
+        ...initialDefaults,
         ...newDefaults,
-      },
-      api,
-    ])
+        headers: sinon.match(
+          (headers) =>
+            Array.from(headers.values()).length === 4 &&
+            headers.get('x-initial') === initialDefaults.headers['x-initial'] &&
+            headers.get('x-initial-2') === newDefaults.headers['x-initial-2'] &&
+            headers.get('x-new') === newDefaults.headers['x-new'] &&
+            headers.get('x-new-2') === newDefaults.headers['x-new-2'],
+        ),
+      }),
+    ),
+    'extend: uses new defaults',
+  )
 
-    newRek(url)
+  const options = {
+    headers: { 'x-option': 'set so good', 'x-initial-2': 'overwritten by option', 'x-new': 'overwritten-by-option' },
+  }
 
-    ts.equals(fetch.callCount, 1, 'original fetch called')
-    ts.equals(Headers.callCount, 1, 'Headers called')
-    ts.ok(fetch.lastCall.calledWith(url, sinon.match({ ...initialDefaults, ...newDefaults })))
+  newRek(url, options)
 
-    const newFetch = sinon.fake.returns({ then: () => ({ then: () => {} }) })
+  t.equals(fetch.callCount, 3, 'options: original fetch called')
+  t.equals(Headers.callCount, 3, 'options: Headers called')
+  t.ok(
+    fetch.lastCall.calledWith(
+      url,
+      sinon.match({
+        ...initialDefaults,
+        ...newDefaults,
+        headers: sinon.match(
+          (headers) =>
+            Array.from(headers.values()).length === 5 &&
+            headers.get('x-initial') === initialDefaults.headers['x-initial'] &&
+            headers.get('x-initial-2') === options.headers['x-initial-2'] &&
+            headers.get('x-new') === options.headers['x-new'] &&
+            headers.get('x-new-2') === newDefaults.headers['x-new-2'] &&
+            headers.get('x-option') === options.headers['x-option'],
+        ),
+      }),
+    ),
+    'options: uses new defaults',
+  )
 
-    newRek = newRek.extend(null, { fetch: newFetch })
+  const newFetch = sinon.fake.returns({ then: () => ({ then: () => {} }) })
 
-    newRek(url)
+  newRek = newRek.extend({ fetch: newFetch })
 
-    ts.equals(fetch.callCount, 1, 'original fetch not called again')
-    ts.equals(newFetch.callCount, 1, 'new fetch called')
-    ts.equals(Headers.callCount, 2, 'Headers called')
-    ts.ok(fetch.lastCall.calledWith(url, sinon.match({ ...initialDefaults, ...newDefaults })), 'uses new defaults')
+  newRek(url)
 
-    ts.end()
-  })
+  t.equals(fetch.callCount, 3, 'new fetch: original fetch not called again')
+  t.equals(newFetch.callCount, 1, 'new fetch: new fetch called')
+  t.equals(Headers.callCount, 4, 'new fetch: Headers called')
+  t.ok(
+    newFetch.lastCall.calledWith(
+      url,
+      sinon.match({
+        ...initialDefaults,
+        ...newDefaults,
+        fetch: newFetch,
+        headers: sinon.match(
+          (headers) =>
+            Array.from(headers.values()).length === 4 &&
+            headers.get('x-initial') === initialDefaults.headers['x-initial'] &&
+            headers.get('x-initial-2') === newDefaults.headers['x-initial-2'] &&
+            headers.get('x-new') === newDefaults.headers['x-new'] &&
+            headers.get('x-new-2') === newDefaults.headers['x-new-2'],
+        ),
+      }),
+    ),
+    'new fetch: uses new defaults',
+  )
+
+  t.end()
 })
 
 test('error', async (t) => {
@@ -400,13 +439,10 @@ test('error', async (t) => {
     ...baseResponse,
     text: sinon.fake.resolves(JSON.stringify(body)),
   }
-  let rek = factory(
-    {},
-    {
-      fetch: sinon.fake.resolves(response),
-      Headers: FakeHeaders,
-    },
-  )
+  let rek = factory({
+    fetch: sinon.fake.resolves(response),
+    Headers: FakeHeaders,
+  })
 
   await rek('/').catch((err) => {
     t.ok(err instanceof FetchError, 'is instance of FetchError')
@@ -418,31 +454,25 @@ test('error', async (t) => {
   })
 
   body = 'a detailed explanation of a very unusual error'
-  rek = factory(
-    {},
-    {
-      fetch: sinon.fake.resolves({
-        ...response,
-        text: sinon.fake.resolves(body),
-      }),
-      Headers: FakeHeaders,
-    },
-  )
+  rek = factory({
+    fetch: sinon.fake.resolves({
+      ...response,
+      text: sinon.fake.resolves(body),
+    }),
+    Headers: FakeHeaders,
+  })
 
   await rek('/').catch((err) => {
     t.equals(err.body, body, 'sets text body when not valid JSON')
   })
 
-  rek = factory(
-    {},
-    {
-      fetch: sinon.fake.resolves({
-        ...response,
-        text: sinon.fake.rejects(),
-      }),
-      Headers: FakeHeaders,
-    },
-  )
+  rek = factory({
+    fetch: sinon.fake.resolves({
+      ...response,
+      text: sinon.fake.rejects(),
+    }),
+    Headers: FakeHeaders,
+  })
 
   await rek('/').catch((err) => {
     t.equals(typeof err.body, 'undefined', 'undefined body if error parsing text')
