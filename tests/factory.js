@@ -196,6 +196,22 @@ test('body handling', (t) => {
   )
 
   init = {
+    headers: { 'content-type': 'application/x-shockwave-flash' },
+    body: new Uint8Array(4),
+  }
+
+  rek('/', init)
+
+  args = fetch.lastCall.args
+
+  t.equal(args[1].body, init.body, 'TypedArray is not stringified')
+  t.equal(
+    args[1].headers.get('content-type'),
+    init.headers['content-type'],
+    'content-type header not modified for TypedArray',
+  )
+
+  init = {
     headers: { 'content-type': 'image/jpeg' },
     body: new FakeBlob(),
   }
