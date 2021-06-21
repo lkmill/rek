@@ -6,9 +6,9 @@ reduce boilerplate, especially when sending and receiving JSON.
 
 | Build            | Unminified | Minified | Gzipped |
 | ---------------- | ---------- | -------- | ------- |
-| ESM bundle       | 3.52 kB    | 1.61 kB  | 850 B   |
-| UMD bundle       | 4.05 kB    | 1.78 kB  | 922 B   |
-| UMD bundle (ES5) | 4.31 kB    | 1.94 kB  | 943 B   |
+| ESM bundle       | 3.28 kB    | 1.54 kB  | 798 B   |
+| UMD bundle       | 3.79 kB    | 1.71 kB  | 873 B   |
+| UMD bundle (ES5) | 4.03 kB    | 1.86 kB  | 894 B   |
 
 ## Table of Contents
 

@@ -51,19 +51,11 @@ export default function factory(defaults) {
       }
     }
 
-    let onFullfilled
-
-    if (response) {
-      if (typeof response === 'function') {
-        onFullfilled = response
-      } else if (response in responseTypes) {
-        headers.set('accept', responseTypes[response])
-
-        onFullfilled = (res) => (res.status === 204 ? null : res[response]())
-      } else {
-        throw new Error('Unknown response type: ' + response)
-      }
-    }
+    const onFullfilled =
+      response &&
+      (typeof response === 'function'
+        ? response
+        : (headers.set('accept', responseTypes[response]), (res) => (res.status === 204 ? null : res[response]())))
 
     const res = fetch(url, options).then((res) => {
       if (res.ok) return res
@@ -83,7 +75,7 @@ export default function factory(defaults) {
         })
     })
 
-    return onFullfilled ? res.then(onFullfilled) : res
+    return res.then(onFullfilled)
   }
 
   requestMethods.forEach((method) => {

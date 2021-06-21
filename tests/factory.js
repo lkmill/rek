@@ -4,7 +4,14 @@ import sinon from 'sinon'
 import factory from '../src/factory.js'
 import FetchError from '../src/error.js'
 
-const responseTypes = ['arrayBuffer', 'blob', 'formData', 'json', 'text']
+const responseTypes = {
+  arrayBuffer: '*/*',
+  blob: '*/*',
+  formData: 'multipart/form-data',
+  json: 'application/json',
+  text: 'text/*',
+}
+
 const requestMethods = ['delete', 'get', 'head']
 const dataMethods = ['patch', 'post', 'put']
 
@@ -29,20 +36,13 @@ test('returns a function', (t) => {
 })
 
 test('response type', async (t) => {
-  let rek = factory({ Headers: FakeHeaders })
-
-  t.throws(
-    () => {
-      rek('/', { response: 'not a valid response type' })
-    },
-    /Unknown response type/,
-    'errors on invalid response type',
-  )
-
   const fakeResponse = { ok: true, json: () => Promise.resolve({}) }
   const fetch = createFetch(fakeResponse)
+  const rek = factory({ fetch, Headers: FakeHeaders })
 
-  rek = factory({ fetch, Headers: FakeHeaders })
+  await rek('/', { response: 'not a valid response type' }).catch((err) => {
+    t.match(err.toString(), /TypeError: res\[response\] is not a function/, 'errors rejects invalid response type')
+  })
 
   let res = await rek('/')
 
@@ -56,16 +56,14 @@ test('response type', async (t) => {
 
   t.equal(res, fakeResponse, 'returns the response instance when `response: null`')
 
-  for (const type of responseTypes) {
+  for (const type in responseTypes) {
     t.test(`.${type}()`, async (ts) => {
       const bodyMethod = sinon.fake.resolves()
       const fetch = sinon.fake.resolves({ ok: true, [type]: bodyMethod })
-      const rek = factory({ fetch, Headers: FakeHeaders })
-
       const accept = 'application/msword'
-      await rek('/', { headers: { accept }, response: type })
+      await rek('/', { fetch, headers: { accept }, response: type })
 
-      ts.notEqual(fetch.lastCall.args[1].headers.get('accept'), accept, 'changes accept header')
+      ts.equal(fetch.lastCall.args[1].headers.get('accept'), responseTypes[type], 'changes accept header')
       ts.ok(bodyMethod.calledOnce, `res.${type}() called`)
     })
   }
