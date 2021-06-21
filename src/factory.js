@@ -38,14 +38,16 @@ export default function factory(defaults) {
     const { body, headers, response, fetch } = options
 
     if (body && typeof body === 'object') {
-      // check if FormData or URLSearchParams
-      if (typeof body.append === 'function') headers.delete('content-type')
-      // check if ReadableStream (.getReader), Blob (.stream), ArrayBuffer or
-      // DataView (.byteLength and .slice or .getInt8)
-      else if (
+      if (typeof body.append === 'function') {
+        // is FormData or URLSearchParams
+        headers.delete('content-type')
+      } else if (
         typeof (body.getReader || body.stream) !== 'function' &&
         (typeof body.byteLength !== 'number' || typeof (body.slice || body.getInt8) !== 'function')
       ) {
+        // `body` is not a valid `BodyInit` (needs to be ReadableStream
+        // (.getReader), Blob (.stream), ArrayBuffer or DataView (.byteLength
+        // and .slice or .getInt8)), stringifying
         options.body = JSON.stringify(body)
         headers.set('content-type', 'application/json')
       }
