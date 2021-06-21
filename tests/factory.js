@@ -475,6 +475,15 @@ test('error', async (t) => {
   })
 
   await rek('/').catch((err) => {
-    t.equals(typeof err.body, 'undefined', 'undefined body if error parsing text')
+    t.equals(err.body, null, 'null body if error parsing text')
+  })
+
+  await rek('/', {
+    fetch: sinon.fake.resolves({
+      ...response,
+      text: sinon.fake.resolves(''),
+    }),
+  }).catch((err) => {
+    t.equals(err.body, null, 'null body if empty string')
   })
 })

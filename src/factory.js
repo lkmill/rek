@@ -20,28 +20,6 @@ const responseTypes = {
  * @returns {Rek}
  */
 export default function factory(defaults) {
-  function makeRequest(url, options) {
-    return options.fetch(url, options).then((res) => {
-      if (!res.ok) {
-        return res
-          .text()
-          .then((text) => {
-            try {
-              return JSON.parse(text)
-            } catch {
-              return text
-            }
-          })
-          .catch(() => {})
-          .then((body) => {
-            throw new FetchError(res, body)
-          })
-      }
-
-      return res
-    })
-  }
-
   function rek(url, options) {
     if (typeof options === 'string') options = { response: options }
 
@@ -55,9 +33,9 @@ export default function factory(defaults) {
       url = url.split('?')[0] + '?' + new URLSearchParams(options.searchParams)
     }
 
-    const headers = (options.headers = new options.Headers(Object.assign({}, defaults.headers, options.headers)))
+    options.headers = new options.Headers(Object.assign({}, defaults.headers, options.headers))
 
-    const body = options.body
+    const { body, headers, response, fetch } = options
 
     if (body && typeof body === 'object') {
       // check if FormData or URLSearchParams
@@ -73,8 +51,6 @@ export default function factory(defaults) {
       }
     }
 
-    const response = options.response
-
     let onFullfilled
 
     if (response) {
@@ -89,7 +65,23 @@ export default function factory(defaults) {
       }
     }
 
-    const res = makeRequest(url, options)
+    const res = fetch(url, options).then((res) => {
+      if (res.ok) return res
+
+      return res
+        .text()
+        .then((text) => {
+          try {
+            return JSON.parse(text)
+          } catch {
+            return text || null
+          }
+        })
+        .catch(() => null)
+        .then((body) => {
+          throw new FetchError(res, body)
+        })
+    })
 
     return onFullfilled ? res.then(onFullfilled) : res
   }

@@ -6,9 +6,9 @@ reduce boilerplate, especially when sending and receiving JSON.
 
 | Build            | Unminified | Minified | Gzipped |
 | ---------------- | ---------- | -------- | ------- |
-| ESM bundle       | 3.55 kB    | 1.60 kB  | 843 B   |
-| UMD bundle       | 4.08 kB    | 1.75 kB  | 907 B   |
-| UMD bundle (ES5) | 4.23 kB    | 1.88 kB  | 921 B   |
+| ESM bundle       | 3.43 kB    | 1.59 kB  | 843 B   |
+| UMD bundle       | 3.96 kB    | 1.76 kB  | 911 B   |
+| UMD bundle (ES5) | 4.23 kB    | 1.91 kB  | 934 B   |
 
 ## Table of Contents
 
@@ -254,7 +254,7 @@ The following bundles are available in the dist folder:
 
 ### Usage
 
-#### rek(url, options)
+#### rek(url, options?)
 
 Makes a request with `fetch` and returns a parsed response body or the
 [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response) (depending
