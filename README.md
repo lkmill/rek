@@ -54,10 +54,13 @@ import rek, { FetchError } from 'rek'
 const rek = require('rek')
 
 rek('/get-stuff').then(json => console.log(json))
-rek('/get-stuff', { response: 'blob' }).then(blob => console.log(blob))
+rek('/get-stuff', { response: 'blob', headers: { accept: 'image/png' } }).then(blob => console.log(blob))
+rek('/get-stuff', 'blob').then(blob => console.log(blob))
+
 rek.post('/do-stuff', { stuff: 'to be done' }).then(json => console.log(json))
 
-rek.put('/do-stuff', { stuff: 'to be done' }, { response: 'text' }).then(text => console.log(text))
+rek.put('/do-stuff', { stuff: 'to be done' }, { redirect: false, response: 'text' }).then(text => console.log(text))
+rek.put('/do-stuff', { stuff: 'to be done' }, 'text').then(text => console.log(text))
 ```
 
 ### CDN (Unpkg)
