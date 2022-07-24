@@ -52,6 +52,7 @@ FetchError.prototype.constructor = FetchError
 }
 
 module.exports = {
+  comments: false,
   presets: [['@babel/env', presetEnvConfig]],
   env: {
     cjs: {

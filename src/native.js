@@ -10,7 +10,7 @@ export default factory({
 })
 
 /**
- * @typedef {import('./types').Defaults} Defaults
- * @typedef {import('./types').Options} Options
- * @typedef {import('./types').Rek} Rek
+ * @typedef {import('./types.js').Defaults} Defaults
+ * @typedef {import('./types.js').Options} Options
+ * @typedef {import('./types.js').Rek} Rek
  */

@@ -6,7 +6,7 @@ import babelConfig from './babel.config.cjs'
 
 export default [
   {
-    input: 'src/browser.js',
+    input: 'src/native.js',
     plugins: [
       babel({
         babelHelpers: 'bundled',
@@ -29,7 +29,7 @@ export default [
     ],
   },
   {
-    input: 'src/browser.js',
+    input: 'src/native.js',
     plugins: [
       babel({
         ...babelConfig.env.umd,
@@ -55,7 +55,7 @@ export default [
     ],
   },
   {
-    input: 'src/browser.js',
+    input: 'src/native.js',
     plugins: [
       babel({
         ...babelConfig.env['umd:es5'],

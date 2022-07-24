@@ -7,27 +7,38 @@
   "exports": {
     ".": [
       {
-        "node": {
-          "require": "./dist/node.cjs",
-          "default": "./dist/node.js"
+        "import": "./dist/native.js",
+        "require": "./dist/native.cjs"
+      }
+    ],
+    "./node": [
+      {
+        "import": "./dist/node.js",
+        "require": "./dist/node.cjs"
+      }
+    ],
+    "./iso": [
+      {
+        "browser": {
+          "import": "./dist/native.js",
+          "require": "./dist/native.cjs"
         },
-        "default": {
-          "require": "./dist/browser.cjs",
-          "default": "./dist/browser.js"
+        "node": {
+          "import": "./dist/node.js",
+          "require": "./dist/node.cjs"
         }
-      },
-      "./dist/browser.js"
+      }
     ],
     "./error": "./dist/error.cjs",
     "./factory": "./dist/factory.cjs"
   },
-  "module": "./dist/browser.js",
+  "module": "./dist/native.js",
   "unpkg": "./dist/rek.umd.min.js",
-  "types": "./dist/browser.d.ts",
+  "types": "./dist/native.d.ts",
   "typesVersions": {
     "*": {
-      "dist/browser.d.ts": [
-        "./dist/browser.d.ts"
+      "dist/native.d.ts": [
+        "./dist/native.d.ts"
       ],
       "*": [
         "./dist/*"
@@ -37,7 +48,7 @@
   "scripts": {
     "build": "npm run build:cjs && npm run build:esm && npm run build:rollup && npm run build:types",
     "build:cjs": "BABEL_ENV=cjs babel src -s --out-file-extension .cjs --out-dir dist",
-    "build:esm": "BABEL_ENV=esm babel src/{browser,node}.js -s --out-dir dist",
+    "build:esm": "BABEL_ENV=esm babel src/{native,node}.js -s --out-dir dist",
     "build:rollup": "rollup -c",
     "build:types": "tsc",
     "clean": "rimraf dist",
