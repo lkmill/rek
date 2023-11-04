@@ -12,7 +12,7 @@ export default factory({
 })
 
 /**
- * @typedef {import('./type').Defaults} Defaults
- * @typedef {import('./type').Options} Options
- * @typedef {import('./type').Rek} Rek
+ * @typedef {import('./types').Defaults} Defaults
+ * @typedef {import('./types').Options} Options
+ * @typedef {import('./types').Rek} Rek
  */
