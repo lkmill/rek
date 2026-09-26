@@ -1,0 +1,30 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "jsxSingleQuote": true,
+  "printWidth": 120,
+  "semi": false,
+  "singleQuote": true,
+  "trailingComma": "all",
+  "embeddedLanguageFormatting": "off",
+  "sortPackageJson": false,
+  "ignorePatterns": [
+    "dist",
+    "dump",
+    "*.*",
+    "!*.cjs",
+    "!*.css",
+    "!*.cts",
+    "!*.html",
+    "!*.js",
+    "!*.json",
+    "!*.jsx",
+    "!*.mjs",
+    "!*.mts",
+    "!*.scss",
+    "!*.ts",
+    "!*.tsx",
+    "!*.yaml",
+    "!*.yml",
+    "pnpm-lock.yaml"
+  ]
+}

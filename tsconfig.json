@@ -5,6 +5,7 @@
     "declaration": true,
     "emitDeclarationOnly": true,
     "lib": ["dom", "es6"],
+    "rootDir": "./src",
     "outDir": "./dist"
   }
 }

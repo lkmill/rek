@@ -1,0 +1,8 @@
+{
+  "rules": {
+    "no-eval": 2,
+    "no-console": [2, { "allow": ["error", "info"] }],
+    "no-unused-vars": 2,
+    "no-thenable": 0
+  }
+}
