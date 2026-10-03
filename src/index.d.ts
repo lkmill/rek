@@ -45,3 +45,5 @@ export declare interface Rek extends WithoutBodyMethod {
 
   extend(defaults?: Options): Rek
 }
+
+export default Rek

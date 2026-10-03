@@ -1,9 +1,3 @@
-/**
- * @typedef {import('./types').Defaults} Defaults
- * @typedef {import('./types').Options} Options
- * @typedef {import('./types').Rek} Rek
- */
-
 import FetchError from './error.js'
 
 const requestMethods = ['delete', 'get', 'head']
@@ -17,11 +11,6 @@ const responseTypes = {
   text: 'text/*',
 }
 
-/**
- *
- * @param {Defaults} defaults
- * @returns {Rek}
- */
 export default function factory(defaults) {
   function rek(url, options) {
     if (typeof options === 'string') options = { response: options }
